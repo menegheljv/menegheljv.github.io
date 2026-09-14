@@ -65,10 +65,6 @@
     padding-block:clamp(64px,11vw,104px) clamp(48px,8vw,76px);
     text-align:center;
   }
-  .hero-canvas{
-    position:absolute; inset:0; width:100%; height:100%;
-    display:block; pointer-events:none; z-index:0;
-  }
   .hero-mark{
     width:min(110px,24vw); margin:0 auto 30px; color:var(--on-black); position:relative; z-index:1;
     filter:drop-shadow(0 0 26px rgba(245,245,245,0.35));
@@ -133,6 +129,7 @@
     line-height:1; transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
   }
   .btn:hover{ transform:translateY(-2px); }
+  .btn svg{ width:16px; height:16px; flex:none; fill:currentColor; }
   .hero .btn.primary{ background:var(--on-black); color:var(--black); box-shadow:0 0 0 1px var(--on-black); }
   .hero .btn.primary:hover{ box-shadow:0 8px 24px rgba(245,245,245,0.25); }
   .hero .btn.ghost{ background:transparent; color:var(--on-black); box-shadow:0 0 0 1px var(--on-black-line); }
@@ -225,8 +222,12 @@
   footer.site-footer .foot-mark{ width:34px; margin:0 auto 18px; color:var(--on-black); opacity:0.9; }
   footer.site-footer .foot-mark svg{ width:100%; height:auto; display:block; }
   footer.site-footer .foot-links{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin-bottom:16px; }
-  footer.site-footer .foot-links a{ font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em; color:var(--on-black-muted); text-decoration:none; }
+  footer.site-footer .foot-links a{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em; color:var(--on-black-muted); text-decoration:none;
+    display:inline-flex; align-items:center; gap:7px;
+  }
   footer.site-footer .foot-links a:hover{ color:var(--on-black); }
+  footer.site-footer .foot-links svg{ width:14px; height:14px; flex:none; fill:currentColor; }
   footer.site-footer p{ font-size:11.5px; color:rgba(245,245,245,0.35); font-family:var(--font-mono); }
 
   @media (max-width:640px){
@@ -242,7 +243,6 @@
 <script>document.documentElement.classList.add('js');</script>
 
   <section class="hero">
-    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="hero-mark" aria-hidden="true">
         <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
@@ -255,10 +255,22 @@
       <p class="loc">Espírito Santo, Brazil — open to remote &amp; international roles</p>
 
       <div class="btn-row">
-        <a class="btn primary" href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">Download Resume ↓</a>
-        <a class="btn ghost" href="mailto:joaovictorpmeneghel@gmail.com">Email</a>
-        <a class="btn ghost" href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">LinkedIn</a>
-        <a class="btn ghost" href="https://github.com/menegheljv" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn primary" href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Download Resume
+        </a>
+        <a class="btn ghost" href="mailto:joaovictorpmeneghel@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          Email
+        </a>
+        <a class="btn ghost" href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a class="btn ghost" href="https://github.com/menegheljv" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+          GitHub
+        </a>
       </div>
     </div>
   </section>
@@ -496,10 +508,22 @@
       </svg>
     </div>
     <div class="foot-links">
-      <a href="mailto:joaovictorpmeneghel@gmail.com">Email</a>
-      <a href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://github.com/menegheljv" target="_blank" rel="noopener">GitHub</a>
-      <a href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">Resume</a>
+      <a href="mailto:joaovictorpmeneghel@gmail.com">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email
+      </a>
+      <a href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://github.com/menegheljv" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        GitHub
+      </a>
+      <a href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        Resume
+      </a>
     </div>
     <p>João Victor Meneghel — Espírito Santo, Brazil</p>
   </footer>
@@ -532,56 +556,6 @@
   }
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---------- animated wave canvas behind the hero ---------- */
-  (function(){
-    var canvas = document.getElementById('heroCanvas');
-    if(!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var DPR = Math.min(window.devicePixelRatio || 1, 2);
-    var hero = canvas.closest('.hero');
-
-    function resize(){
-      var rect = hero.getBoundingClientRect();
-      canvas.width = rect.width * DPR;
-      canvas.height = rect.height * DPR;
-      canvas.style.width = rect.width + 'px';
-      canvas.style.height = rect.height + 'px';
-      ctx.setTransform(DPR,0,0,DPR,0,0);
-    }
-    window.addEventListener('resize', resize);
-    resize();
-
-    var waves = [
-      { amp:22, len:340, speed:0.014, phase:0,   alpha:0.16 },
-      { amp:14, len:230, speed:-0.020, phase:2,  alpha:0.10 },
-      { amp:9,  len:160, speed:0.026, phase:4.2, alpha:0.07 }
-    ];
-
-    function draw(t){
-      var w = canvas.width / DPR, h = canvas.height / DPR;
-      ctx.clearRect(0,0,w,h);
-      var midY = h * 0.5;
-      waves.forEach(function(wave){
-        ctx.beginPath();
-        for(var x = -20; x <= w + 20; x += 4){
-          var y = midY + Math.sin(x / wave.len + t * wave.speed + wave.phase) * wave.amp;
-          if(x === -20) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        }
-        ctx.strokeStyle = 'rgba(245,245,245,' + wave.alpha + ')';
-        ctx.lineWidth = 2;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-      });
-    }
-
-    if(reduceMotion){
-      draw(0);
-    } else {
-      var frame = function(t){ draw(t || 0); requestAnimationFrame(frame); };
-      requestAnimationFrame(frame);
-    }
-  })();
 
   /* ---------- count-up numbers ---------- */
   function animateCount(el){
