@@ -65,14 +65,36 @@
     padding-block:clamp(64px,11vw,104px) clamp(48px,8vw,76px);
     text-align:center;
   }
-  .hero-echo{
-    position:absolute; top:50%; left:50%; width:min(1400px,240vw);
-    transform:translate(-50%,-46%); opacity:0.055; color:var(--on-black);
-    pointer-events:none; z-index:0;
+  .hero-canvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    display:block; pointer-events:none; z-index:0;
   }
-  .hero-mark{ width:min(110px,24vw); margin:0 auto 30px; color:var(--on-black); position:relative; z-index:1;
-    filter:drop-shadow(0 0 26px rgba(245,245,245,0.35)); }
+  .hero-mark{
+    width:min(110px,24vw); margin:0 auto 30px; color:var(--on-black); position:relative; z-index:1;
+    filter:drop-shadow(0 0 26px rgba(245,245,245,0.35));
+    animation:mark-float 5s ease-in-out infinite;
+  }
   .hero-mark svg{ width:100%; height:auto; display:block; }
+  @keyframes mark-float{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+
+  /* ---------- scroll reveal (progressive enhancement: only once .js is set) ---------- */
+  .js .reveal, .js .entry, .js .proj-card{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+  .js .reveal.in, .js .entry.in, .js .proj-card.in{ opacity:1; transform:none; }
+  .js .stat.reveal:nth-child(1){ transition-delay:0s; }
+  .js .stat.reveal:nth-child(2){ transition-delay:.08s; }
+  .js .stat.reveal:nth-child(3){ transition-delay:.16s; }
+  .js .stat.reveal:nth-child(4){ transition-delay:.24s; }
+  .js .proj-card:nth-child(1){ transition-delay:0s; }
+  .js .proj-card:nth-child(2){ transition-delay:.1s; }
+  .js .proj-card:nth-child(3){ transition-delay:.2s; }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero-mark{ animation:none; }
+    .js .reveal, .js .entry, .js .proj-card{ transition:none; opacity:1; transform:none; }
+  }
   .hero h1{
     position:relative; z-index:1;
     font-family:var(--font-display);
@@ -217,11 +239,10 @@
 </style>
 </head>
 <body>
+<script>document.documentElement.classList.add('js');</script>
 
   <section class="hero">
-    <svg class="hero-echo" viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
-    </svg>
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="hero-mark" aria-hidden="true">
         <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
@@ -245,20 +266,20 @@
   <section class="stats">
     <div class="wrap">
       <div class="stats-grid">
-        <div class="stat">
-          <div class="num">10M+</div>
+        <div class="stat reveal">
+          <div class="num" data-count-to="10" data-suffix="M+">0</div>
           <div class="lbl">Organic views<br>Anchieta City Hall channels</div>
         </div>
-        <div class="stat">
-          <div class="num">58%</div>
+        <div class="stat reveal">
+          <div class="num" data-count-to="58" data-suffix="%">0</div>
           <div class="lbl">First-round win<br>after 5 straight losses</div>
         </div>
-        <div class="stat">
-          <div class="num">180K+</div>
+        <div class="stat reveal">
+          <div class="num" data-count-to="180" data-suffix="K+">0</div>
           <div class="lbl">Reach, zero paid media<br>beach-litter campaign</div>
         </div>
-        <div class="stat">
-          <div class="num">1M+</div>
+        <div class="stat reveal">
+          <div class="num" data-count-to="1" data-suffix="M+">0</div>
           <div class="lbl">Organic views<br>mayoral office channels</div>
         </div>
       </div>
@@ -501,12 +522,105 @@
     b.addEventListener('click', function(){
       activate(b.dataset.tab);
       history.replaceState(null, '', '#' + b.dataset.tab);
+      // re-trigger reveal for whatever just became visible in the new panel
+      requestAnimationFrame(revealCheck);
     });
   });
   var initial = (location.hash || '').replace('#','');
   if(initial && document.getElementById('tab-' + initial)){
     activate(initial);
   }
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- animated wave canvas behind the hero ---------- */
+  (function(){
+    var canvas = document.getElementById('heroCanvas');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var hero = canvas.closest('.hero');
+
+    function resize(){
+      var rect = hero.getBoundingClientRect();
+      canvas.width = rect.width * DPR;
+      canvas.height = rect.height * DPR;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    var waves = [
+      { amp:22, len:340, speed:0.014, phase:0,   alpha:0.16 },
+      { amp:14, len:230, speed:-0.020, phase:2,  alpha:0.10 },
+      { amp:9,  len:160, speed:0.026, phase:4.2, alpha:0.07 }
+    ];
+
+    function draw(t){
+      var w = canvas.width / DPR, h = canvas.height / DPR;
+      ctx.clearRect(0,0,w,h);
+      var midY = h * 0.5;
+      waves.forEach(function(wave){
+        ctx.beginPath();
+        for(var x = -20; x <= w + 20; x += 4){
+          var y = midY + Math.sin(x / wave.len + t * wave.speed + wave.phase) * wave.amp;
+          if(x === -20) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.strokeStyle = 'rgba(245,245,245,' + wave.alpha + ')';
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      });
+    }
+
+    if(reduceMotion){
+      draw(0);
+    } else {
+      var frame = function(t){ draw(t || 0); requestAnimationFrame(frame); };
+      requestAnimationFrame(frame);
+    }
+  })();
+
+  /* ---------- count-up numbers ---------- */
+  function animateCount(el){
+    var target = parseFloat(el.dataset.countTo);
+    var suffix = el.dataset.suffix || '';
+    if(reduceMotion){ el.textContent = target + suffix; return; }
+    var start = null, duration = 1100;
+    function step(ts){
+      if(!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased) + suffix;
+      if(progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- scroll reveal (entries, cards, stats) ---------- */
+  var revealTargets = document.querySelectorAll('.entry, .proj-card, .reveal');
+  var seen = new WeakSet();
+  var io = ('IntersectionObserver' in window) ? new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !seen.has(entry.target)){
+        seen.add(entry.target);
+        entry.target.classList.add('in');
+        var num = entry.target.querySelector('[data-count-to]');
+        if(num) animateCount(num);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold:0.15 }) : null;
+
+  function revealCheck(){
+    revealTargets.forEach(function(el){
+      if(io) io.observe(el);
+      else el.classList.add('in'); // no IO support: just show it
+    });
+  }
+  revealCheck();
 })();
 </script>
 
