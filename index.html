@@ -13,21 +13,27 @@
 
 <style>
   :root{
+    --black:   #0a0a0a;
+    --black-2: #141414;
+    --white:   #f5f5f5;
     --bg:      #f5f5f5;
-    --bg-alt:  #ececec;
+    --bg-alt:  #ececea;
     --ink:     #0a0a0a;
     --muted:   rgba(10,10,10,0.62);
     --muted-2: rgba(10,10,10,0.42);
     --line:    rgba(10,10,10,0.14);
     --line-soft: rgba(10,10,10,0.08);
+    --on-black:      #f5f5f5;
+    --on-black-muted: rgba(245,245,245,0.62);
+    --on-black-line:  rgba(245,245,245,0.16);
 
     --font-display: 'Anton', 'Arial Narrow', sans-serif;
     --font-brand:   'Bricolage Grotesque', sans-serif;
     --font-mono:    'IBM Plex Mono', ui-monospace, monospace;
 
-    --radius: 14px;
+    --radius: 16px;
     --pill: 999px;
-    --max-w: 880px;
+    --max-w: 960px;
     --edge: clamp(20px, 5vw, 56px);
   }
 
@@ -49,136 +55,220 @@
   p{ margin:0; }
   ul{ margin:0; padding:0; list-style:none; }
 
-  .wrap{ max-width:var(--max-w); margin-inline:auto; padding-inline:var(--edge); }
+  .wrap{ max-width:var(--max-w); margin-inline:auto; padding-inline:var(--edge); position:relative; z-index:1; }
 
-  /* ---------- hero ---------- */
-  .hero{ padding-block:clamp(56px,10vw,96px) clamp(40px,7vw,64px); text-align:center; }
-  .hero-mark{ width:min(96px,22vw); margin:0 auto 28px; color:var(--ink); }
+  /* ============ HERO (black band) ============ */
+  .hero{
+    position:relative; overflow:hidden;
+    background:var(--black);
+    color:var(--on-black);
+    padding-block:clamp(64px,11vw,104px) clamp(48px,8vw,76px);
+    text-align:center;
+  }
+  .hero-echo{
+    position:absolute; top:50%; left:50%; width:min(1400px,240vw);
+    transform:translate(-50%,-46%); opacity:0.055; color:var(--on-black);
+    pointer-events:none; z-index:0;
+  }
+  .hero-mark{ width:min(110px,24vw); margin:0 auto 30px; color:var(--on-black); position:relative; z-index:1;
+    filter:drop-shadow(0 0 26px rgba(245,245,245,0.35)); }
   .hero-mark svg{ width:100%; height:auto; display:block; }
   .hero h1{
+    position:relative; z-index:1;
     font-family:var(--font-display);
     text-transform:uppercase;
-    font-size:clamp(34px,7vw,58px);
-    line-height:1.02;
+    font-size:clamp(38px,8.4vw,74px);
+    line-height:0.98;
     letter-spacing:0.005em;
   }
   .hero .role{
-    margin-top:14px;
+    position:relative; z-index:1;
+    margin-top:16px;
     font-family:var(--font-mono);
     font-size:13px;
-    letter-spacing:0.08em;
+    letter-spacing:0.1em;
     text-transform:uppercase;
-    color:var(--muted);
+    color:var(--on-black-muted);
   }
   .hero .thesis{
-    margin:26px auto 0; max-width:52ch;
-    font-size:clamp(17px,2.4vw,20px); color:var(--ink);
+    position:relative; z-index:1;
+    margin:28px auto 0; max-width:56ch;
+    font-size:clamp(17px,2.4vw,21px); color:var(--on-black); line-height:1.5;
   }
   .hero .loc{
-    margin-top:16px; font-family:var(--font-mono); font-size:12.5px; color:var(--muted-2);
+    position:relative; z-index:1;
+    margin-top:18px; font-family:var(--font-mono); font-size:12.5px; color:var(--on-black-muted);
     letter-spacing:0.04em;
   }
 
   .btn-row{
-    margin-top:32px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+    position:relative; z-index:1;
+    margin-top:36px; display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
   }
   .btn{
-    font-family:var(--font-brand); font-size:14.5px; text-decoration:none;
-    border-radius:var(--pill); padding:13px 26px; display:inline-flex; align-items:center; gap:8px;
-    line-height:1; transition:transform .15s ease, opacity .15s ease; border:1px solid var(--ink);
+    font-family:var(--font-brand); font-weight:500; font-size:14.5px; text-decoration:none;
+    border-radius:var(--pill); padding:14px 28px; display:inline-flex; align-items:center; gap:8px;
+    line-height:1; transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
   }
-  .btn:hover{ transform:translateY(-1px); }
-  .btn.primary{ background:var(--ink); color:var(--bg); }
-  .btn.ghost{ background:transparent; color:var(--ink); }
+  .btn:hover{ transform:translateY(-2px); }
+  .hero .btn.primary{ background:var(--on-black); color:var(--black); box-shadow:0 0 0 1px var(--on-black); }
+  .hero .btn.primary:hover{ box-shadow:0 8px 24px rgba(245,245,245,0.25); }
+  .hero .btn.ghost{ background:transparent; color:var(--on-black); box-shadow:0 0 0 1px var(--on-black-line); }
+  .hero .btn.ghost:hover{ box-shadow:0 0 0 1px var(--on-black); }
 
-  /* ---------- tabs ---------- */
-  .tabs-section{ padding-bottom:clamp(56px,10vw,96px); }
+  /* ============ STATS (still black) ============ */
+  .stats{ background:var(--black); color:var(--on-black); padding-bottom:clamp(56px,9vw,88px); }
+  .stats-grid{
+    display:grid; grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--on-black-line);
+  }
+  .stat{ padding:26px 14px 0; text-align:center; border-left:1px solid var(--on-black-line); }
+  .stat:first-child{ border-left:none; }
+  .stat .num{ font-family:var(--font-display); font-size:clamp(26px,4.2vw,42px); line-height:1; }
+  .stat .lbl{ margin-top:10px; font-family:var(--font-mono); font-size:11px; letter-spacing:0.05em; color:var(--on-black-muted); line-height:1.4; }
+
+  /* ============ TABS (white) ============ */
+  .tabs-section{ padding-block:clamp(56px,9vw,92px); }
+  .section-kicker{
+    text-align:center; font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.16em;
+    text-transform:uppercase; color:var(--muted-2); margin-bottom:10px;
+  }
+  .section-heading{
+    text-align:center; font-family:var(--font-display); text-transform:uppercase;
+    font-size:clamp(26px,4.4vw,38px); margin-bottom:clamp(30px,5vw,44px);
+  }
+
   .tab-bar{
     display:flex; flex-wrap:wrap; justify-content:center; gap:6px;
-    border-bottom:1px solid var(--line); padding-bottom:0; margin-bottom:clamp(28px,5vw,44px);
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:var(--pill);
+    padding:6px; margin:0 auto clamp(32px,5vw,48px); width:max-content; max-width:100%;
   }
   .tab-btn{
-    font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--muted); background:none; border:none; cursor:pointer;
-    padding:12px 16px; border-bottom:2px solid transparent; margin-bottom:-1px;
-    transition:color .15s ease, border-color .15s ease;
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.05em; text-transform:uppercase;
+    color:var(--muted); background:none; border:none; cursor:pointer; border-radius:var(--pill);
+    padding:10px 18px; transition:color .15s ease, background .15s ease;
+    white-space:nowrap;
   }
   .tab-btn:hover{ color:var(--ink); }
-  .tab-btn.active{ color:var(--ink); border-bottom-color:var(--ink); }
+  .tab-btn.active{ color:var(--bg); background:var(--ink); }
 
   .tab-panel{ display:none; }
-  .tab-panel.active{ display:block; animation:fade .25s ease; }
-  @keyframes fade{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  .tab-panel.active{ display:block; animation:fade .3s ease; }
+  @keyframes fade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
 
   .entry{
-    padding-block:22px; border-top:1px solid var(--line-soft);
-    display:grid; grid-template-columns:1fr auto; gap:8px 20px; align-items:baseline;
+    padding-block:26px; border-top:1px solid var(--line-soft);
+    display:grid; grid-template-columns:1fr auto; gap:6px 20px; align-items:baseline;
   }
-  .entry:first-child{ border-top:none; }
-  .entry .role{ font-size:16px; }
-  .entry .org{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); margin-top:2px; grid-column:1; }
+  .entry:first-child{ border-top:none; padding-top:0; }
+  .entry .role{ font-size:17.5px; font-weight:500; }
+  .entry .org{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); margin-top:3px; grid-column:1; }
   .entry .when{ font-family:var(--font-mono); font-size:12px; color:var(--muted-2); white-space:nowrap; }
-  .entry ul{ grid-column:1 / -1; margin-top:12px; display:flex; flex-direction:column; gap:6px; }
-  .entry li{ font-size:14.5px; color:var(--muted); padding-left:16px; position:relative; }
-  .entry li::before{ content:"—"; position:absolute; left:0; }
+  .entry ul{ grid-column:1 / -1; margin-top:14px; display:flex; flex-direction:column; gap:8px; }
+  .entry li{ font-size:14.5px; color:var(--muted); padding-left:18px; position:relative; }
+  .entry li::before{ content:"—"; position:absolute; left:0; color:var(--muted-2); }
   .entry li b{ color:var(--ink); font-weight:600; }
 
+  .proj-grid{ display:flex; flex-direction:column; gap:16px; }
   .proj-card{
-    border:1px solid var(--line); border-radius:var(--radius); padding:26px;
-    margin-top:16px; background:var(--bg-alt);
+    border:1px solid var(--line); border-radius:var(--radius); padding:30px;
+    background:var(--bg-alt); position:relative; overflow:hidden;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .proj-card:first-child{ margin-top:0; }
-  .proj-card .ptitle{ font-size:18px; }
-  .proj-card .ptag{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.06em; margin-top:6px; }
-  .proj-card .pdesc{ font-size:14.5px; color:var(--muted); margin-top:14px; max-width:60ch; }
-  .proj-card .btn{ margin-top:18px; padding:10px 20px; font-size:13.5px; }
+  .proj-card:hover{ transform:translateY(-3px); box-shadow:0 14px 32px rgba(10,10,10,0.10); border-color:rgba(10,10,10,0.28); }
+  .proj-card .pnum{ font-family:var(--font-mono); font-size:11px; color:var(--muted-2); letter-spacing:0.08em; }
+  .proj-card .ptitle{ font-family:var(--font-display); text-transform:uppercase; font-size:22px; margin-top:8px; letter-spacing:0.01em; }
+  .proj-card .ptag{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted-2); text-transform:uppercase; letter-spacing:0.05em; margin-top:8px; }
+  .proj-card .pdesc{ font-size:14.5px; color:var(--muted); margin-top:16px; max-width:62ch; line-height:1.55; }
+  .proj-card .btn{ margin-top:22px; padding:11px 22px; font-size:13.5px; background:var(--ink); color:var(--bg); box-shadow:none; }
+  .proj-card .btn:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(10,10,10,0.22); }
 
-  .skills-grid{ display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+  .skills-grid{ display:grid; grid-template-columns:1fr 1fr; gap:40px; }
   .skills-grid h3{
     font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted-2);
-    margin-bottom:12px;
+    margin-bottom:14px;
   }
-  .chip-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:9px; }
   .chip{
     font-family:var(--font-mono); font-size:12px; color:var(--ink);
-    border:1px solid var(--line); border-radius:var(--pill); padding:6px 13px;
+    border:1px solid var(--line); border-radius:var(--pill); padding:7px 14px; background:var(--bg-alt);
   }
-  .lang-list{ display:flex; flex-direction:column; gap:8px; }
-  .lang-list li{ font-size:14.5px; display:flex; justify-content:space-between; }
+  .lang-list{ display:flex; flex-direction:column; }
+  .lang-list li{ font-size:14.5px; display:flex; justify-content:space-between; padding-block:11px; border-top:1px solid var(--line-soft); }
+  .lang-list li:first-child{ border-top:none; padding-top:0; }
   .lang-list li span{ color:var(--muted-2); font-family:var(--font-mono); font-size:12px; }
 
-  footer{ border-top:1px solid var(--line-soft); padding-block:36px; text-align:center; }
-  footer p{ font-size:12px; color:var(--muted-2); font-family:var(--font-mono); }
+  /* ============ FOOTER (black band) ============ */
+  footer.site-footer{ background:var(--black); color:var(--on-black); padding-block:clamp(40px,7vw,56px); text-align:center; }
+  footer.site-footer .foot-mark{ width:34px; margin:0 auto 18px; color:var(--on-black); opacity:0.9; }
+  footer.site-footer .foot-mark svg{ width:100%; height:auto; display:block; }
+  footer.site-footer .foot-links{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin-bottom:16px; }
+  footer.site-footer .foot-links a{ font-family:var(--font-mono); font-size:12px; letter-spacing:0.04em; color:var(--on-black-muted); text-decoration:none; }
+  footer.site-footer .foot-links a:hover{ color:var(--on-black); }
+  footer.site-footer p{ font-size:11.5px; color:rgba(245,245,245,0.35); font-family:var(--font-mono); }
 
   @media (max-width:640px){
     .entry{ grid-template-columns:1fr; }
     .entry .when{ grid-column:1; }
-    .skills-grid{ grid-template-columns:1fr; gap:24px; }
+    .skills-grid{ grid-template-columns:1fr; gap:28px; }
+    .stats-grid{ grid-template-columns:1fr 1fr; row-gap:24px; }
+    .stat:nth-child(3){ border-left:none; }
   }
 </style>
 </head>
 <body>
 
-  <section class="hero wrap">
-    <div class="hero-mark" aria-hidden="true">
-      <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
-        <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
-      </svg>
-    </div>
-    <h1>João Victor Meneghel</h1>
-    <p class="role">Comms &amp; Growth Strategist · Data Analyst · AI Governance</p>
-    <p class="thesis">Data Storyteller — the translator between raw data and human decision. Working at the intersection of public administration, data-driven storytelling and AI-driven institutional communication.</p>
-    <p class="loc">Espírito Santo, Brazil — open to remote &amp; international roles</p>
+  <section class="hero">
+    <svg class="hero-echo" viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
+    </svg>
+    <div class="wrap">
+      <div class="hero-mark" aria-hidden="true">
+        <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
+        </svg>
+      </div>
+      <h1>João Victor Meneghel</h1>
+      <p class="role">Comms &amp; Growth Strategist · Data Analyst · AI Governance</p>
+      <p class="thesis">Data Storyteller — the translator between raw data and human decision. Working at the intersection of public administration, data-driven storytelling and AI-driven institutional communication.</p>
+      <p class="loc">Espírito Santo, Brazil — open to remote &amp; international roles</p>
 
-    <div class="btn-row">
-      <a class="btn primary" href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">Download Resume ↓</a>
-      <a class="btn ghost" href="mailto:joaovictorpmeneghel@gmail.com">Email</a>
-      <a class="btn ghost" href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="btn ghost" href="https://github.com/menegheljv" target="_blank" rel="noopener">GitHub</a>
+      <div class="btn-row">
+        <a class="btn primary" href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">Download Resume ↓</a>
+        <a class="btn ghost" href="mailto:joaovictorpmeneghel@gmail.com">Email</a>
+        <a class="btn ghost" href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn ghost" href="https://github.com/menegheljv" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="wrap">
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="num">10M+</div>
+          <div class="lbl">Organic views<br>Anchieta City Hall channels</div>
+        </div>
+        <div class="stat">
+          <div class="num">58%</div>
+          <div class="lbl">First-round win<br>after 5 straight losses</div>
+        </div>
+        <div class="stat">
+          <div class="num">180K+</div>
+          <div class="lbl">Reach, zero paid media<br>beach-litter campaign</div>
+        </div>
+        <div class="stat">
+          <div class="num">1M+</div>
+          <div class="lbl">Organic views<br>mayoral office channels</div>
+        </div>
+      </div>
     </div>
   </section>
 
   <section class="tabs-section wrap">
+    <p class="section-kicker">— Profile</p>
+    <h2 class="section-heading">Work, Projects &amp; Proof</h2>
+
     <div class="tab-bar" role="tablist">
       <button class="tab-btn active" data-tab="work" role="tab" aria-selected="true">Work</button>
       <button class="tab-btn" data-tab="projects" role="tab" aria-selected="false">Projects</button>
@@ -249,23 +339,28 @@
 
     <!-- PROJECTS -->
     <div class="tab-panel" id="tab-projects">
-      <div class="proj-card">
-        <div class="ptitle">The Metamorphosis of Power</div>
-        <div class="ptag">Data storytelling · Python · pandas · SQLite</div>
-        <p class="pdesc">A Brazilian election data case study: how 20 years of losses in Alfredo Chaves, ES became a first-round win — the youngest mayor in the state's history. Full pipeline from TSE/IBGE public data to a published narrative.</p>
-        <a class="btn primary" href="https://menegheljv.github.io/the-metamorphosis-of-power-2004-2024/" target="_blank" rel="noopener">View case study →</a>
-      </div>
-      <div class="proj-card">
-        <div class="ptitle">Check Step Flow</div>
-        <div class="ptag">Media &amp; information literacy · UNESCO Global Youth Hackathon 2026</div>
-        <p class="pdesc">Founder of a media and information literacy (MIL) initiative tackling misinformation, submitted to the UNESCO Global Youth Hackathon 2026.</p>
-        <a class="btn primary" href="https://checkstepflow.github.io/Check-Step-Flow/" target="_blank" rel="noopener">View project →</a>
-      </div>
-      <div class="proj-card">
-        <div class="ptitle">Meneghel Creative</div>
-        <div class="ptag">Brand &amp; growth · event photo &amp; video studio</div>
-        <p class="pdesc">Own studio founded in 2021 — political communication and social strategy, since 2026 with a boutique audiovisual production line for private events.</p>
-        <a class="btn primary" href="https://menegheljv.github.io/meneghelcreative/" target="_blank" rel="noopener">Visit site →</a>
+      <div class="proj-grid">
+        <div class="proj-card">
+          <div class="pnum">01</div>
+          <div class="ptitle">The Metamorphosis of Power</div>
+          <div class="ptag">Data storytelling · Python · pandas · SQLite</div>
+          <p class="pdesc">A Brazilian election data case study: how 20 years of losses in Alfredo Chaves, ES became a first-round win — the youngest mayor in the state's history. Full pipeline from TSE/IBGE public data to a published narrative.</p>
+          <a class="btn" href="https://menegheljv.github.io/the-metamorphosis-of-power-2004-2024/" target="_blank" rel="noopener">View case study →</a>
+        </div>
+        <div class="proj-card">
+          <div class="pnum">02</div>
+          <div class="ptitle">Check Step Flow</div>
+          <div class="ptag">Media &amp; information literacy · UNESCO Global Youth Hackathon 2026</div>
+          <p class="pdesc">Founder of a media and information literacy (MIL) initiative tackling misinformation, submitted to the UNESCO Global Youth Hackathon 2026.</p>
+          <a class="btn" href="https://checkstepflow.github.io/Check-Step-Flow/" target="_blank" rel="noopener">View project →</a>
+        </div>
+        <div class="proj-card">
+          <div class="pnum">03</div>
+          <div class="ptitle">Meneghel Creative</div>
+          <div class="ptag">Brand &amp; growth · event photo &amp; video studio</div>
+          <p class="pdesc">Own studio founded in 2021 — political communication and social strategy, since 2026 with a boutique audiovisual production line for private events.</p>
+          <a class="btn" href="https://menegheljv.github.io/meneghelcreative/" target="_blank" rel="noopener">Visit site →</a>
+        </div>
       </div>
     </div>
 
@@ -305,6 +400,13 @@
       </div>
       <div class="entry">
         <div>
+          <div class="role">Training Course for the Application of the Transparency and Public Governance Index — Municipal Executive</div>
+          <div class="org">Transparência Internacional</div>
+        </div>
+        <div class="when">Apr 2025</div>
+      </div>
+      <div class="entry">
+        <div>
           <div class="role">EF SET 66/100 (C1)</div>
           <div class="org">English proficiency certification</div>
         </div>
@@ -321,6 +423,16 @@
 
     <!-- VOLUNTEERING -->
     <div class="tab-panel" id="tab-volunteering">
+      <div class="entry">
+        <div>
+          <div class="role">Transparency Index Evaluator — Municipalities of Rio Grande do Sul</div>
+          <div class="org">Observatório Social do Brasil</div>
+        </div>
+        <div class="when">May — Jul 2025</div>
+        <ul>
+          <li>Assessed the transparency and public integrity index of municipalities, applying the methodology developed by Transparency International Brazil.</li>
+        </ul>
+      </div>
       <div class="entry">
         <div>
           <div class="role">Volunteer</div>
@@ -356,7 +468,18 @@
     </div>
   </section>
 
-  <footer>
+  <footer class="site-footer">
+    <div class="foot-mark" aria-hidden="true">
+      <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
+      </svg>
+    </div>
+    <div class="foot-links">
+      <a href="mailto:joaovictorpmeneghel@gmail.com">Email</a>
+      <a href="https://linkedin.com/in/joaovictormeneghel" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://github.com/menegheljv" target="_blank" rel="noopener">GitHub</a>
+      <a href="assets/joao-victor-meneghel-resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
     <p>João Victor Meneghel — Espírito Santo, Brazil</p>
   </footer>
 
