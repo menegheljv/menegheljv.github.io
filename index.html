@@ -65,6 +65,10 @@
     padding-block:clamp(64px,11vw,104px) clamp(48px,8vw,76px);
     text-align:center;
   }
+  .hero-canvas{
+    position:absolute; inset:0; width:100%; height:100%;
+    display:block; pointer-events:none; z-index:0;
+  }
   .hero-mark{
     width:min(110px,24vw); margin:0 auto 30px; color:var(--on-black); position:relative; z-index:1;
     filter:drop-shadow(0 0 26px rgba(245,245,245,0.35));
@@ -176,10 +180,13 @@
   @keyframes fade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
 
   .entry{
-    padding-block:26px; border-top:1px solid var(--line-soft);
+    border:1px solid var(--line); border-radius:var(--radius); padding:24px 26px;
+    background:var(--bg-alt); margin-bottom:16px;
     display:grid; grid-template-columns:1fr auto; gap:6px 20px; align-items:baseline;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .entry:first-child{ border-top:none; padding-top:0; }
+  .entry:last-child{ margin-bottom:0; }
+  .entry:hover{ transform:translateY(-2px); box-shadow:0 10px 26px rgba(10,10,10,0.08); border-color:rgba(10,10,10,0.24); }
   .entry .role{ font-size:17.5px; font-weight:500; }
   .entry .org{ font-family:var(--font-mono); font-size:12.5px; color:var(--muted); margin-top:3px; grid-column:1; }
   .entry .when{ font-family:var(--font-mono); font-size:12px; color:var(--muted-2); white-space:nowrap; }
@@ -202,7 +209,10 @@
   .proj-card .btn{ margin-top:22px; padding:11px 22px; font-size:13.5px; background:var(--ink); color:var(--bg); box-shadow:none; }
   .proj-card .btn:hover{ transform:translateY(-2px); box-shadow:0 8px 20px rgba(10,10,10,0.22); }
 
-  .skills-grid{ display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+  .skills-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .skills-grid > div{
+    border:1px solid var(--line); border-radius:var(--radius); padding:26px; background:var(--bg-alt);
+  }
   .skills-grid h3{
     font-family:var(--font-mono); font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted-2);
     margin-bottom:14px;
@@ -243,6 +253,7 @@
 <script>document.documentElement.classList.add('js');</script>
 
   <section class="hero">
+    <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="hero-mark" aria-hidden="true">
         <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
@@ -556,6 +567,95 @@
   }
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 3D-perspective code rain behind the hero (0/1 + the M mark) ---------- */
+  (function(){
+    var canvas = document.getElementById('heroCanvas');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var DPR = Math.min(window.devicePixelRatio || 1, 2);
+    var hero = canvas.closest('.hero');
+    var mPath = new Path2D("M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z");
+    var COLORS = ['96,181,255', '61,214,140']; // tech blue, matrix green (rgb triples)
+    var RAY_COUNT = 26, GLYPHS_PER_RAY = 9;
+    var rays = [], w = 0, h = 0;
+
+    function pickChar(){ return Math.random() < 0.1 ? 'M' : (Math.random() < 0.5 ? '0' : '1'); }
+
+    function setupRays(){
+      rays = [];
+      var vpX = w * 0.5, vpY = h * 0.04;
+      for(var i = 0; i < RAY_COUNT; i++){
+        var bx = (w / (RAY_COUNT - 1)) * i;
+        var glyphs = [];
+        for(var j = 0; j < GLYPHS_PER_RAY; j++){
+          glyphs.push({
+            t: (j / GLYPHS_PER_RAY) + Math.random() * 0.06,
+            speed: 0.00014 + Math.random() * 0.00022,
+            ch: pickChar(),
+            color: COLORS[Math.floor(Math.random() * COLORS.length)]
+          });
+        }
+        rays.push({ vpX: vpX, vpY: vpY, bx: bx, by: h * 1.08, glyphs: glyphs });
+      }
+    }
+
+    function resize(){
+      var rect = hero.getBoundingClientRect();
+      w = rect.width; h = rect.height;
+      canvas.width = w * DPR;
+      canvas.height = h * DPR;
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+      setupRays();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function draw(dt){
+      ctx.clearRect(0, 0, w, h);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      rays.forEach(function(ray){
+        ray.glyphs.forEach(function(g){
+          g.t += g.speed * dt;
+          if(g.t > 1){ g.t = g.t % 1; g.ch = pickChar(); g.color = COLORS[Math.floor(Math.random() * COLORS.length)]; }
+          var x = ray.vpX + (ray.bx - ray.vpX) * g.t;
+          var y = ray.vpY + (ray.by - ray.vpY) * g.t;
+          var depth = 0.08 + g.t * 1.35;
+          var alpha = Math.min(0.26, 0.03 + g.t * 0.30);
+          ctx.save();
+          ctx.translate(x, y);
+          ctx.fillStyle = 'rgba(' + g.color + ',' + alpha + ')';
+          if(g.ch === 'M'){
+            var s = depth * 0.085;
+            ctx.scale(s, s);
+            ctx.translate(-153.6, -88.4);
+            ctx.fill(mPath);
+          } else {
+            ctx.font = (8 + depth * 13) + 'px "IBM Plex Mono", ui-monospace, monospace';
+            ctx.fillText(g.ch, 0, 0);
+          }
+          ctx.restore();
+        });
+      });
+    }
+
+    if(reduceMotion){
+      draw(16);
+    } else {
+      var last = null;
+      function frame(ts){
+        if(last === null) last = ts;
+        var dt = Math.min(ts - last, 48);
+        last = ts;
+        draw(dt);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+  })();
 
   /* ---------- count-up numbers ---------- */
   function animateCount(el){
