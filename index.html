@@ -670,7 +670,12 @@
       { ch: 'M', font: '900 58px Verdana, sans-serif',                style: 'neon',    dx: 0,  dy: 0,   rot: 0,   delay: 2200 },
       { ch: 'M', font: 'italic 900 64px "Trebuchet MS", sans-serif',  style: 'graffiti',dx: 0,  dy: 0,  rot: 0, delay: 1540 },
       { ch: 'M', font: '700 60px "Bricolage Grotesque"',              style: 'painted', dx: 0,  dy: 0,   rot: 0,   delay: 2640 },
-      { ch: 'M', font: '400 62px Georgia, serif',                     style: 'statue',  dx: 0,   dy: 0,  rot: 0,   delay: 2860 }
+      { ch: 'M', font: '400 62px Georgia, serif',                     style: 'statue',  dx: 0,   dy: 0,  rot: 0,   delay: 2860 },
+      { ch: 'M', font: 'italic 400 76px "Brush Script MT", cursive',   style: 'gold',    dx: 0,   dy: 0,  rot: 0,   delay: 3080 },
+      { ch: 'M', font: '200 78px "Bricolage Grotesque"',               style: 'glass',   dx: 0,   dy: 0,  rot: 0,   delay: 3300 },
+      { ch: 'M', font: '900 60px "Arial Black", sans-serif',           style: 'lava',    dx: 0,   dy: 0,  rot: 0,   delay: 3520 },
+      { ch: 'M', font: '400 64px "Palatino Linotype", Palatino, serif',style: 'rust',    dx: 0,   dy: 0,  rot: 0,   delay: 3740 },
+      { ch: 'M', font: '700 50px Consolas, "Lucida Console", monospace', style: 'led',   dx: 0,   dy: 0,  rot: 0,   delay: 3960 }
     ];
     var SLOT = 220; // spacing between each M's entrance
     var FADE_IN = 200, HOLD = 150, FADE_OUT = 300, ITEM_LIFE = FADE_IN + HOLD + FADE_OUT;
@@ -707,11 +712,14 @@
         return;
       }
 
-      // pseudo-3D: a stepped dark shadow behind the glyph reads as extruded depth
-      for(var stp = 4; stp >= 1; stp--){
-        ctx.fillStyle = 'rgba(0,0,0,' + (alpha * 0.12) + ')';
-        ctx.fillText(ch, stp * 1.4, stp * 1.4);
+      // pseudo-3D: a stepped dark shadow (extrusion) plus an offset light highlight
+      // (top-left catching the light) reads as a proper embossed/beveled letter
+      for(var stp = 7; stp >= 1; stp--){
+        ctx.fillStyle = 'rgba(0,0,0,' + (alpha * 0.11) + ')';
+        ctx.fillText(ch, stp * 1.7, stp * 1.7);
       }
+      ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.35) + ')';
+      ctx.fillText(ch, -1.6, -1.6);
 
       if(style === 'grass'){
         var g = ctx.createLinearGradient(0, -36, 0, 36);
@@ -765,6 +773,29 @@
         sg.addColorStop(0.5, 'rgba(140,112,70,' + alpha + ')');
         sg.addColorStop(1, 'rgba(70,96,80,' + alpha + ')');
         ctx.fillStyle = sg;
+      } else if(style === 'gold'){
+        var gd = ctx.createLinearGradient(-36, -34, 36, 34);
+        gd.addColorStop(0, 'rgba(255,240,180,' + alpha + ')');
+        gd.addColorStop(0.5, 'rgba(215,168,58,' + alpha + ')');
+        gd.addColorStop(1, 'rgba(140,102,30,' + alpha + ')');
+        ctx.fillStyle = gd;
+      } else if(style === 'glass'){
+        var gl = ctx.createLinearGradient(0, -36, 0, 36);
+        gl.addColorStop(0, 'rgba(225,248,255,' + (alpha * 0.75) + ')');
+        gl.addColorStop(1, 'rgba(150,210,230,' + (alpha * 0.55) + ')');
+        ctx.fillStyle = gl;
+      } else if(style === 'lava'){
+        var lv = ctx.createLinearGradient(0, -36, 0, 36);
+        lv.addColorStop(0, 'rgba(40,14,10,' + alpha + ')');
+        lv.addColorStop(1, 'rgba(20,6,4,' + alpha + ')');
+        ctx.fillStyle = lv;
+      } else if(style === 'rust'){
+        var ru = ctx.createLinearGradient(0, -36, 0, 36);
+        ru.addColorStop(0, 'rgba(200,110,55,' + alpha + ')');
+        ru.addColorStop(1, 'rgba(110,55,25,' + alpha + ')');
+        ctx.fillStyle = ru;
+      } else if(style === 'led'){
+        ctx.fillStyle = 'rgba(15,30,20,' + alpha + ')';
       } else { // chalk
         ctx.fillStyle = 'rgba(225,225,220,' + (alpha * 0.9) + ')';
       }
@@ -834,6 +865,43 @@
           ctx.moveTo(cx0, cy0);
           ctx.lineTo(cx0 + (Math.random() * 24 - 12), cy0 + (Math.random() * 24 - 12));
           ctx.stroke();
+        }
+      } else if(style === 'gold'){
+        ctx.strokeStyle = 'rgba(255,255,235,' + (alpha * 0.7) + ')';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(-40, -34); ctx.lineTo(40, 34);
+        ctx.stroke();
+      } else if(style === 'glass'){
+        ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(-34, -30); ctx.lineTo(-8, 30);
+        ctx.stroke();
+      } else if(style === 'lava'){
+        ctx.strokeStyle = 'rgba(255,150,30,' + (alpha * 0.85) + ')';
+        ctx.lineWidth = 2;
+        for(var lc = 0; lc < 4; lc++){
+          var lx = -36 + Math.random() * 72, ly = -32 + Math.random() * 64;
+          ctx.beginPath();
+          ctx.moveTo(lx, ly);
+          ctx.lineTo(lx + (Math.random() * 16 - 8), ly + (Math.random() * 16 - 8));
+          ctx.lineTo(lx + (Math.random() * 20 - 10), ly + (Math.random() * 20 - 10));
+          ctx.stroke();
+        }
+      } else if(style === 'rust'){
+        for(var rk = 0; rk < 26; rk++){
+          ctx.fillStyle = 'rgba(' + (Math.random() < 0.5 ? '70,32,12' : '230,150,90') + ',' + (alpha * 0.45) + ')';
+          ctx.beginPath();
+          ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, 1 + Math.random() * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else if(style === 'led'){
+        ctx.fillStyle = 'rgba(90,255,140,' + alpha + ')';
+        for(var ly2 = -32; ly2 < 32; ly2 += 6){
+          for(var lx2 = -44; lx2 < 44; lx2 += 6){
+            if(Math.random() < 0.72) ctx.fillRect(lx2, ly2, 3.4, 3.4);
+          }
         }
       }
       ctx.restore();
