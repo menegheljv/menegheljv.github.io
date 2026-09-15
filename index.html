@@ -79,6 +79,12 @@
     0%,100%{ transform:translateY(0); }
     50%{ transform:translateY(-4px); }
   }
+  /* the real mark resolves into place after the intro burst of M's on the canvas */
+  .js .hero-mark-reveal{
+    opacity:0; transform:scale(.7);
+    transition:opacity .8s ease, transform .8s cubic-bezier(.22,.9,.32,1);
+  }
+  .js .hero-mark-reveal.revealed{ opacity:1; transform:scale(1); }
 
   /* ---------- scroll reveal (progressive enhancement: only once .js is set) ---------- */
   .js .reveal, .js .entry, .js .proj-card{ opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
@@ -93,6 +99,7 @@
 
   @media (prefers-reduced-motion: reduce){
     .hero-mark{ animation:none; }
+    .js .hero-mark-reveal{ transition:none; opacity:1; transform:none; }
     .js .reveal, .js .entry, .js .proj-card{ transition:none; opacity:1; transform:none; }
   }
   .hero h1{
@@ -256,9 +263,11 @@
     <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
     <div class="wrap">
       <div class="hero-mark" aria-hidden="true">
-        <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
-          <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
-        </svg>
+        <div class="hero-mark-reveal" id="heroMarkReveal">
+          <svg viewBox="0 0 307.244 176.752" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z" fill="currentColor"/>
+          </svg>
+        </div>
       </div>
       <h1>João Victor Meneghel</h1>
       <p class="role">Comms &amp; Growth Strategist · Data Analyst · AI Governance</p>
@@ -575,7 +584,8 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---------- discreet vertical code rain behind the hero (0/1 + the M mark) ---------- */
+  /* ---------- hero background: intro burst of M's (several textures) resolving into
+     the real logo, then a discreet vertical code rain (0/1 + the M mark) underneath ---------- */
   (function(){
     var canvas = document.getElementById('heroCanvas');
     if(!canvas) return;
@@ -618,8 +628,7 @@
     window.addEventListener('resize', resize);
     resize();
 
-    function draw(dt){
-      ctx.clearRect(0, 0, w, h);
+    function drawRain(dt){
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       var top = -20, bottom = h + 20;
@@ -645,15 +654,92 @@
       });
     }
 
+    /* ---- intro: several M's, several textures, scattered -- then they fade as the real logo resolves ---- */
+    var burst = [
+      { xf: 0.22, yf: 0.40, w: 130, rot: -10, style: 'solid',    delay: 0    },
+      { xf: 0.80, yf: 0.28, w: 80,  rot: 14,  style: 'outline',  delay: 220  },
+      { xf: 0.50, yf: 0.66, w: 160, rot: 0,   style: 'gradient', delay: 440  },
+      { xf: 0.14, yf: 0.74, w: 75,  rot: 16,  style: 'green',    delay: 660  },
+      { xf: 0.86, yf: 0.70, w: 100, rot: -14, style: 'halftone', delay: 880  },
+      { xf: 0.50, yf: 0.14, w: 60,  rot: 0,   style: 'blue',     delay: 1100 }
+    ];
+    var ITEM_LIFE = 950, INTRO_DURATION = ITEM_LIFE + 1100 + 50;
+
+    function paintTexture(style, alpha){
+      if(style === 'outline'){
+        ctx.strokeStyle = 'rgba(245,245,245,' + (0.9 * alpha) + ')';
+        ctx.lineWidth = 8;
+        ctx.stroke(mPath);
+      } else if(style === 'halftone'){
+        ctx.save();
+        ctx.clip(mPath);
+        ctx.fillStyle = 'rgba(245,245,245,' + (0.9 * alpha) + ')';
+        for(var yy = 8; yy < 172; yy += 12){
+          for(var xx = 8; xx < 300; xx += 12){
+            ctx.beginPath();
+            ctx.arc(xx, yy, 4, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        ctx.restore();
+      } else if(style === 'gradient'){
+        var grad = ctx.createLinearGradient(20, 20, 290, 160);
+        grad.addColorStop(0, 'rgba(96,181,255,' + (0.85 * alpha) + ')');
+        grad.addColorStop(1, 'rgba(61,214,140,' + (0.85 * alpha) + ')');
+        ctx.fillStyle = grad;
+        ctx.fill(mPath);
+      } else if(style === 'blue'){
+        ctx.fillStyle = 'rgba(96,181,255,' + (0.82 * alpha) + ')';
+        ctx.fill(mPath);
+      } else if(style === 'green'){
+        ctx.fillStyle = 'rgba(61,214,140,' + (0.82 * alpha) + ')';
+        ctx.fill(mPath);
+      } else {
+        ctx.fillStyle = 'rgba(245,245,245,' + (0.85 * alpha) + ')';
+        ctx.fill(mPath);
+      }
+    }
+
+    function drawBurst(elapsed){
+      burst.forEach(function(item){
+        var local = elapsed - item.delay;
+        if(local < 0 || local > ITEM_LIFE) return;
+        var alpha;
+        if(local < 280) alpha = local / 280;
+        else if(local < 480) alpha = 1;
+        else alpha = Math.max(0, 1 - (local - 480) / 470);
+        var responsive = Math.min(1, w / 680); // shrink the burst proportionally on narrow viewports
+        var scaleFactor = (item.w * responsive) / 307.244;
+        ctx.save();
+        ctx.translate(item.xf * w, item.yf * h);
+        ctx.rotate(item.rot * Math.PI / 180);
+        ctx.scale(scaleFactor, scaleFactor);
+        ctx.translate(-153.6, -88.4);
+        paintTexture(item.style, alpha);
+        ctx.restore();
+      });
+    }
+
+    function revealHeroMark(){
+      var el = document.getElementById('heroMarkReveal');
+      if(el) el.classList.add('revealed');
+    }
+
     if(reduceMotion){
-      draw(16);
+      drawRain(16);
+      revealHeroMark();
     } else {
-      var last = null;
+      setTimeout(revealHeroMark, 1600);
+      var last = null, startTs = null;
       function frame(ts){
+        if(startTs === null) startTs = ts;
         if(last === null) last = ts;
         var dt = Math.min(ts - last, 48);
         last = ts;
-        draw(dt);
+        var elapsed = ts - startTs;
+        ctx.clearRect(0, 0, w, h);
+        drawRain(dt);
+        if(elapsed < INTRO_DURATION) drawBurst(elapsed);
         requestAnimationFrame(frame);
       }
       requestAnimationFrame(frame);
