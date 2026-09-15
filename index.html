@@ -652,24 +652,28 @@
        there. The rain behind stays pure 1s and 0s, everywhere else. ---- */
     var burst = [
       { ch: 'M', font: '900 78px Anton',                             style: 'fire',    dx: -10, dy: -6,  rot: -9,  delay: 0   },
-      { ch: 'M', font: 'italic 300 68px "Bricolage Grotesque"',       style: 'water',   dx: 10,  dy: 4,   rot: 11,  delay: 140 },
-      { ch: 'm', font: '700 50px "IBM Plex Mono"',                    style: 'metal',   dx: 0,   dy: 10,  rot: 0,   delay: 280,
+      { ch: 'M', font: 'italic 300 68px "Bricolage Grotesque"',       style: 'water',   dx: 10,  dy: 4,   rot: 11,  delay: 220 },
+      { ch: 'm', font: '700 50px "IBM Plex Mono"',                    style: 'metal',   dx: 0,   dy: 10,  rot: 0,   delay: 440,
         paper: { color: '#dfe6ea', w: 66, h: 78, rot: -7 } },
-      { ch: 'M', font: '400 72px Georgia, "Times New Roman", serif',  style: 'grass',   dx: -8,  dy: 8,   rot: 14,  delay: 420 },
-      { ch: 'M', font: '900 56px Impact, "Arial Narrow", sans-serif', style: 'stone',   dx: 12,  dy: -8,  rot: -12, delay: 560,
+      { ch: 'M', font: '400 72px Georgia, "Times New Roman", serif',  style: 'grass',   dx: -8,  dy: 8,   rot: 14,  delay: 660 },
+      { ch: 'M', font: '900 56px Impact, "Arial Narrow", sans-serif', style: 'stone',   dx: 12,  dy: -8,  rot: -12, delay: 880,
         paper: { color: '#d9c9a8', w: 60, h: 72, rot: 6 } },
-      { ch: 'm', font: '400 46px "Courier New", monospace',           style: 'outline', dx: -4,  dy: -12, rot: 0,   delay: 700,
+      { ch: 'm', font: '400 46px "Courier New", monospace',           style: 'outline', dx: -4,  dy: -12, rot: 0,   delay: 1100,
         paper: { color: '#1c2430', w: 56, h: 66, rot: 4 } },
-      { ch: 'M', font: '700 60px Bricolage Grotesque',                style: 'chalk',   dx: 4,   dy: 2,   rot: -3,  delay: 840,
+      { ch: 'M', font: '700 60px Bricolage Grotesque',                style: 'chalk',   dx: 4,   dy: 2,   rot: -3,  delay: 1320,
         paper: { color: '#2a3630', w: 74, h: 84, rot: -3 } },
-      { ch: 'M', font: '700 62px Anton',                              style: 'solid',   dx: 6,   dy: 12,  rot: 6,   delay: 980,
+      { ch: 'M', font: '700 62px Anton',                              style: 'solid',   dx: 6,   dy: 12,  rot: 6,   delay: 2420,
         paper: { color: '#efe4cf', w: 62, h: 74, rot: 8 } },
-      { ch: 'M', font: '400 66px "Trebuchet MS", sans-serif',         style: 'wood',    dx: -6,  dy: -10, rot: 8,   delay: 1120,
+      { ch: 'M', font: '400 66px "Trebuchet MS", sans-serif',         style: 'wood',    dx: -6,  dy: -10, rot: 8,   delay: 1760,
         paper: { color: '#c9b591', w: 64, h: 76, rot: -5 } },
-      { ch: 'm', font: 'italic 400 50px Georgia, serif',              style: 'ice',     dx: 8,   dy: 12,  rot: -6,  delay: 1260 },
-      { ch: 'M', font: '900 58px Verdana, sans-serif',                style: 'neon',    dx: -2,  dy: 0,   rot: 4,   delay: 1400 }
+      { ch: 'm', font: 'italic 400 50px Georgia, serif',              style: 'ice',     dx: 8,   dy: 12,  rot: -6,  delay: 1980 },
+      { ch: 'M', font: '900 58px Verdana, sans-serif',                style: 'neon',    dx: -2,  dy: 0,   rot: 4,   delay: 2200 },
+      { ch: 'M', font: 'italic 900 64px "Trebuchet MS", sans-serif',  style: 'graffiti',dx: -8,  dy: -4,  rot: -14, delay: 1540 },
+      { ch: 'M', font: '700 60px "Bricolage Grotesque"',              style: 'painted', dx: 10,  dy: 6,   rot: 9,   delay: 2640 },
+      { ch: 'M', font: '400 62px Georgia, serif',                     style: 'statue',  dx: 0,   dy: -8,  rot: 0,   delay: 2860 }
     ];
-    var ITEM_LIFE = 900, INTRO_DURATION = ITEM_LIFE + 1400 + 50;
+    var SLOT = 220; // each M gets its own slot; slots never overlap, so only one M is ever visible
+    var ITEM_LIFE = SLOT, INTRO_DURATION = burst.length * SLOT + 50;
 
     // paints one letterform (varies by font/ch) in one material (varies by style),
     // masked to that letterform's own silhouette via 'source-atop' compositing
@@ -700,6 +704,12 @@
         ctx.fillText(ch, 0, 0);
         ctx.restore();
         return;
+      }
+
+      // pseudo-3D: a stepped dark shadow behind the glyph reads as extruded depth
+      for(var stp = 4; stp >= 1; stp--){
+        ctx.fillStyle = 'rgba(0,0,0,' + (alpha * 0.12) + ')';
+        ctx.fillText(ch, stp * 1.4, stp * 1.4);
       }
 
       if(style === 'grass'){
@@ -737,6 +747,23 @@
         ig.addColorStop(0, 'rgba(225,245,255,' + alpha + ')');
         ig.addColorStop(1, 'rgba(150,205,230,' + alpha + ')');
         ctx.fillStyle = ig;
+      } else if(style === 'graffiti'){
+        var gr = ctx.createLinearGradient(-40, -36, 40, 36);
+        gr.addColorStop(0, 'rgba(255,70,160,' + alpha + ')');
+        gr.addColorStop(0.55, 'rgba(255,130,60,' + alpha + ')');
+        gr.addColorStop(1, 'rgba(255,210,60,' + alpha + ')');
+        ctx.fillStyle = gr;
+      } else if(style === 'painted'){
+        var pg = ctx.createLinearGradient(-30, -30, 30, 30);
+        pg.addColorStop(0, 'rgba(120,190,255,' + alpha + ')');
+        pg.addColorStop(1, 'rgba(40,100,180,' + alpha + ')');
+        ctx.fillStyle = pg;
+      } else if(style === 'statue'){
+        var sg = ctx.createLinearGradient(-36, -34, 36, 34);
+        sg.addColorStop(0, 'rgba(214,186,140,' + alpha + ')');
+        sg.addColorStop(0.5, 'rgba(140,112,70,' + alpha + ')');
+        sg.addColorStop(1, 'rgba(70,96,80,' + alpha + ')');
+        ctx.fillStyle = sg;
       } else { // chalk
         ctx.fillStyle = 'rgba(225,225,220,' + (alpha * 0.9) + ')';
       }
@@ -836,10 +863,10 @@
       burst.forEach(function(item){
         var local = elapsed - item.delay;
         if(local < 0 || local > ITEM_LIFE) return;
-        var alpha;
-        if(local < 260) alpha = local / 260;
-        else if(local < 460) alpha = 1;
-        else alpha = Math.max(0, 1 - (local - 460) / 440);
+        var alpha; // fade in / hold / fade out, entirely inside this item's own slot -- never touches the next one
+        if(local < 60) alpha = local / 60;
+        else if(local < 160) alpha = 1;
+        else alpha = Math.max(0, 1 - (local - 160) / 60);
         ctx.save();
         ctx.translate(markX + item.dx * responsive, markY + item.dy * responsive);
         ctx.rotate(item.rot * Math.PI / 180);
@@ -859,7 +886,7 @@
       drawRain(16);
       revealHeroMark();
     } else {
-      setTimeout(revealHeroMark, 2100);
+      setTimeout(revealHeroMark, 14 * 220); // fires right as the last M's slot ends -- clean handoff, no overlap
       var last = null, startTs = null;
       function frame(ts){
         if(startTs === null) startTs = ts;
