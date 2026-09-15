@@ -678,7 +678,9 @@
       { ch: 'M', font: '700 50px Consolas, "Lucida Console", monospace', style: 'led',   dx: 0,   dy: 0,  rot: 0,   delay: 3960 }
     ];
     var SLOT = 220; // spacing between each M's entrance
-    var FADE_IN = 200, HOLD = 150, FADE_OUT = 300, ITEM_LIFE = FADE_IN + HOLD + FADE_OUT;
+    // each M's whole life (fade in + hold + fade out) fits inside its own SLOT, so it is
+    // always fully gone (alpha 0) before the next one starts fading in -- no blending, ever
+    var FADE_IN = 70, HOLD = 80, FADE_OUT = 70, ITEM_LIFE = FADE_IN + HOLD + FADE_OUT;
     var INTRO_DURATION = (burst.length - 1) * SLOT + ITEM_LIFE + 50;
 
     // paints one letterform (varies by font/ch) in one material (varies by style),
@@ -963,7 +965,7 @@
       drawRain(16);
       revealHeroMark();
     } else {
-      setTimeout(revealHeroMark, (burst.length - 1) * SLOT + FADE_IN + HOLD); // real logo crossfades in as the last M starts fading out
+      setTimeout(revealHeroMark, (burst.length - 1) * SLOT + ITEM_LIFE); // fires only once the last M has fully faded out -- no mixing there either
       var last = null, startTs = null;
       function frame(ts){
         if(startTs === null) startTs = ts;
