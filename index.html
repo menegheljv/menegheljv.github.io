@@ -654,19 +654,26 @@
     }
 
     /* ---- intro: several different TYPEFACES for "M"/"m", each rendered in a different
-       MATERIAL/CONTEXT (grass, fire, water, metal, stone...), all stacked in the SAME
-       spot -- right where the real logo sits -- taking turns before the one real logo
-       resolves there. The rain behind stays pure 1s and 0s, everywhere else. ---- */
+       MATERIAL/CONTEXT (grass, fire, water, metal, stone, chalk...), all stacked in the
+       SAME spot -- right where the real logo sits -- taking turns, some pasted onto a
+       little paper card behind them like a cut-out -- before the one real logo resolves
+       there. The rain behind stays pure 1s and 0s, everywhere else. ---- */
     var burst = [
-      { ch: 'M', font: '900 78px Anton',                             style: 'fire',    dx: -10, dy: -6,  rot: -9,  delay: 0    },
-      { ch: 'M', font: 'italic 300 68px "Bricolage Grotesque"',       style: 'water',   dx: 10,  dy: 4,   rot: 11,  delay: 170  },
-      { ch: 'm', font: '700 50px "IBM Plex Mono"',                    style: 'metal',   dx: 0,   dy: 10,  rot: 0,   delay: 340  },
-      { ch: 'M', font: '400 72px Georgia, "Times New Roman", serif',  style: 'grass',   dx: -8,  dy: 8,   rot: 14,  delay: 510  },
-      { ch: 'M', font: '900 56px Impact, "Arial Narrow", sans-serif', style: 'stone',   dx: 12,  dy: -8,  rot: -12, delay: 680  },
-      { ch: 'm', font: '400 46px "Courier New", monospace',           style: 'outline', dx: -4,  dy: -12, rot: 0,   delay: 850  },
-      { ch: 'M', font: '700 62px Anton',                              style: 'solid',   dx: 6,   dy: 12,  rot: 6,   delay: 1020 }
+      { ch: 'M', font: '900 78px Anton',                             style: 'fire',    dx: -10, dy: -6,  rot: -9,  delay: 0   },
+      { ch: 'M', font: 'italic 300 68px "Bricolage Grotesque"',       style: 'water',   dx: 10,  dy: 4,   rot: 11,  delay: 140 },
+      { ch: 'm', font: '700 50px "IBM Plex Mono"',                    style: 'metal',   dx: 0,   dy: 10,  rot: 0,   delay: 280,
+        paper: { color: '#dfe6ea', w: 66, h: 78, rot: -7 } },
+      { ch: 'M', font: '400 72px Georgia, "Times New Roman", serif',  style: 'grass',   dx: -8,  dy: 8,   rot: 14,  delay: 420 },
+      { ch: 'M', font: '900 56px Impact, "Arial Narrow", sans-serif', style: 'stone',   dx: 12,  dy: -8,  rot: -12, delay: 560,
+        paper: { color: '#d9c9a8', w: 60, h: 72, rot: 6 } },
+      { ch: 'm', font: '400 46px "Courier New", monospace',           style: 'outline', dx: -4,  dy: -12, rot: 0,   delay: 700,
+        paper: { color: '#1c2430', w: 56, h: 66, rot: 4 } },
+      { ch: 'M', font: '700 60px Bricolage Grotesque',                style: 'chalk',   dx: 4,   dy: 2,   rot: -3,  delay: 840,
+        paper: { color: '#2a3630', w: 74, h: 84, rot: -3 } },
+      { ch: 'M', font: '700 62px Anton',                              style: 'solid',   dx: 6,   dy: 12,  rot: 6,   delay: 980,
+        paper: { color: '#efe4cf', w: 62, h: 74, rot: 8 } }
     ];
-    var ITEM_LIFE = 900, INTRO_DURATION = ITEM_LIFE + 1020 + 50;
+    var ITEM_LIFE = 900, INTRO_DURATION = ITEM_LIFE + 980 + 50;
 
     // paints one letterform (varies by font/ch) in one material (varies by style),
     // masked to that letterform's own silhouette via 'source-atop' compositing
@@ -710,8 +717,10 @@
         mg.addColorStop(0.55, 'rgba(110,114,118,' + alpha + ')');
         mg.addColorStop(1, 'rgba(185,190,195,' + alpha + ')');
         ctx.fillStyle = mg;
-      } else { // stone
+      } else if(style === 'stone'){
         ctx.fillStyle = 'rgba(150,150,148,' + alpha + ')';
+      } else { // chalk
+        ctx.fillStyle = 'rgba(225,225,220,' + (alpha * 0.9) + ')';
       }
       ctx.fillText(ch, 0, 0); // base fill establishes the glyph's own alpha mask
 
@@ -751,6 +760,33 @@
           ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, 1.2 + Math.random() * 1.8, 0, Math.PI * 2);
           ctx.fill();
         }
+      } else if(style === 'chalk'){
+        ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+        for(var m = 0; m < 40; m++){
+          ctx.beginPath();
+          ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, 0.5 + Math.random() * 0.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+
+    // a little rounded-rect "paper card" behind a glyph, like a cut-out letter glued on -- rotated
+    // slightly independently for that hand-pasted feel
+    function drawPaper(paper, alpha){
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.rotate(paper.rot * Math.PI / 180);
+      ctx.fillStyle = paper.color;
+      ctx.shadowColor = 'rgba(0,0,0,0.45)';
+      ctx.shadowBlur = 7;
+      ctx.shadowOffsetY = 3;
+      if(ctx.roundRect){
+        ctx.beginPath();
+        ctx.roundRect(-paper.w / 2, -paper.h / 2, paper.w, paper.h, 5);
+        ctx.fill();
+      } else {
+        ctx.fillRect(-paper.w / 2, -paper.h / 2, paper.w, paper.h);
       }
       ctx.restore();
     }
@@ -768,6 +804,7 @@
         ctx.translate(markX + item.dx * responsive, markY + item.dy * responsive);
         ctx.rotate(item.rot * Math.PI / 180);
         ctx.scale(responsive, responsive);
+        if(item.paper) drawPaper(item.paper, alpha);
         paintGlyphTexture(item.ch, item.font, item.style, alpha, elapsed);
         ctx.restore();
       });
@@ -782,7 +819,7 @@
       drawRain(16);
       revealHeroMark();
     } else {
-      setTimeout(revealHeroMark, 1600);
+      setTimeout(revealHeroMark, 1680);
       var last = null, startTs = null;
       function frame(ts){
         if(startTs === null) startTs = ts;
