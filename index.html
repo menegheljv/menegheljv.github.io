@@ -675,7 +675,12 @@
       { ch: 'M', font: '200 78px "Bricolage Grotesque"',               style: 'glass',   dx: 0,   dy: 0,  rot: 0,   delay: 3300 },
       { ch: 'M', font: '900 60px "Arial Black", sans-serif',           style: 'lava',    dx: 0,   dy: 0,  rot: 0,   delay: 3520 },
       { ch: 'M', font: '400 64px "Palatino Linotype", Palatino, serif',style: 'rust',    dx: 0,   dy: 0,  rot: 0,   delay: 3740 },
-      { ch: 'M', font: '700 50px Consolas, "Lucida Console", monospace', style: 'led',   dx: 0,   dy: 0,  rot: 0,   delay: 3960 }
+      { ch: 'M', font: '700 50px Consolas, "Lucida Console", monospace', style: 'led',   dx: 0,   dy: 0,  rot: 0,   delay: 3960 },
+      { ch: 'M', font: 'italic 300 74px "Bricolage Grotesque"',         style: 'galaxy',  dx: 0,   dy: 0,  rot: 0,   delay: 4180 },
+      { ch: 'M', font: '500 54px "IBM Plex Mono"',                     style: 'circuit', dx: 0,   dy: 0,  rot: 0,   delay: 4400 },
+      { ch: 'M', font: 'italic 900 62px Anton',                        style: 'lightning', dx: 0, dy: 0,  rot: 0,   delay: 4620 },
+      { ch: 'M', font: '300 70px Verdana, sans-serif',                 style: 'crystal', dx: 0,   dy: 0,  rot: 0,   delay: 4840 },
+      { ch: 'M', font: '700 60px fantasy',                             style: 'holo',    dx: 0,   dy: 0,  rot: 0,   delay: 5060 }
     ];
     var SLOT = 220; // spacing between each M's entrance
     // each M's whole life (fade in + hold + fade out) fits inside its own SLOT, so it is
@@ -798,6 +803,29 @@
         ctx.fillStyle = ru;
       } else if(style === 'led'){
         ctx.fillStyle = 'rgba(15,30,20,' + alpha + ')';
+      } else if(style === 'galaxy'){
+        var gx = ctx.createLinearGradient(0, -36, 0, 36);
+        gx.addColorStop(0, 'rgba(30,14,60,' + alpha + ')');
+        gx.addColorStop(0.5, 'rgba(60,20,90,' + alpha + ')');
+        gx.addColorStop(1, 'rgba(10,10,40,' + alpha + ')');
+        ctx.fillStyle = gx;
+      } else if(style === 'circuit'){
+        ctx.fillStyle = 'rgba(8,26,16,' + alpha + ')';
+      } else if(style === 'lightning'){
+        ctx.fillStyle = 'rgba(10,14,30,' + alpha + ')';
+      } else if(style === 'crystal'){
+        var cr = ctx.createLinearGradient(-36, -34, 36, 34);
+        cr.addColorStop(0, 'rgba(200,170,255,' + alpha + ')');
+        cr.addColorStop(0.5, 'rgba(120,110,230,' + alpha + ')');
+        cr.addColorStop(1, 'rgba(70,60,170,' + alpha + ')');
+        ctx.fillStyle = cr;
+      } else if(style === 'holo'){
+        var ho = ctx.createLinearGradient(-40, -34, 40, 34);
+        ho.addColorStop(0, 'rgba(255,120,200,' + alpha + ')');
+        ho.addColorStop(0.33, 'rgba(140,160,255,' + alpha + ')');
+        ho.addColorStop(0.66, 'rgba(120,255,220,' + alpha + ')');
+        ho.addColorStop(1, 'rgba(255,230,120,' + alpha + ')');
+        ctx.fillStyle = ho;
       } else { // chalk
         ctx.fillStyle = 'rgba(225,225,220,' + (alpha * 0.9) + ')';
       }
@@ -904,6 +932,68 @@
           for(var lx2 = -44; lx2 < 44; lx2 += 6){
             if(Math.random() < 0.72) ctx.fillRect(lx2, ly2, 3.4, 3.4);
           }
+        }
+      } else if(style === 'galaxy'){
+        for(var st = 0; st < 45; st++){
+          ctx.fillStyle = 'rgba(255,255,255,' + (alpha * (0.3 + Math.random() * 0.6)) + ')';
+          ctx.beginPath();
+          ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, Math.random() * 1.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.fillStyle = 'rgba(255,140,220,' + (alpha * 0.35) + ')';
+        ctx.beginPath(); ctx.arc(-14, -8, 16, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = 'rgba(120,200,255,' + (alpha * 0.3) + ')';
+        ctx.beginPath(); ctx.arc(18, 14, 14, 0, Math.PI * 2); ctx.fill();
+      } else if(style === 'circuit'){
+        ctx.strokeStyle = 'rgba(90,255,170,' + (alpha * 0.8) + ')';
+        ctx.lineWidth = 1.4;
+        for(var cc = 0; cc < 7; cc++){
+          var cx1 = -40 + Math.random() * 80, cy1 = -34 + Math.random() * 68;
+          var midX = cx1 + (Math.random() * 16 - 8);
+          ctx.beginPath();
+          ctx.moveTo(cx1, cy1);
+          ctx.lineTo(midX, cy1);
+          ctx.lineTo(midX, cy1 + (Math.random() * 16 - 8));
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(255,210,90,' + (alpha * 0.9) + ')';
+          ctx.beginPath(); ctx.arc(cx1, cy1, 1.6, 0, Math.PI * 2); ctx.fill();
+        }
+      } else if(style === 'lightning'){
+        ctx.save();
+        ctx.shadowColor = 'rgba(150,220,255,' + alpha + ')';
+        ctx.shadowBlur = 10;
+        ctx.strokeStyle = 'rgba(210,240,255,' + alpha + ')';
+        ctx.lineWidth = 2.2;
+        for(var bolt = 0; bolt < 2; bolt++){
+          var bx = -20 + bolt * 34, by = -34;
+          ctx.beginPath();
+          ctx.moveTo(bx, by);
+          for(var seg = 0; seg < 4; seg++){
+            bx += Math.random() * 16 - 4;
+            by += 18;
+            ctx.lineTo(bx, by);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      } else if(style === 'crystal'){
+        ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+        ctx.lineWidth = 1.2;
+        for(var fc = 0; fc < 5; fc++){
+          ctx.beginPath();
+          ctx.moveTo(-40 + Math.random() * 80, -36 + Math.random() * 72);
+          ctx.lineTo(-40 + Math.random() * 80, -36 + Math.random() * 72);
+          ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
+        ctx.beginPath(); ctx.moveTo(-8, -20); ctx.lineTo(6, -14); ctx.lineTo(-4, 0); ctx.fill();
+      } else if(style === 'holo'){
+        ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.4) + ')';
+        ctx.lineWidth = 3;
+        for(var hl = -30; hl < 30; hl += 9){
+          ctx.beginPath();
+          ctx.moveTo(-44, hl); ctx.lineTo(44, hl + 10);
+          ctx.stroke();
         }
       }
       ctx.restore();
