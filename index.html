@@ -849,6 +849,16 @@
           var fx = -32 + Math.random() * 64, fy = 8 - Math.random() * 30;
           ctx.beginPath(); ctx.ellipse(fx, fy, 4, 10, 0, 0, Math.PI * 2); ctx.fill();
         }
+        // thin upward licking flames on top of the embers
+        ctx.strokeStyle = 'rgba(255,220,150,' + (alpha * 0.5) + ')';
+        ctx.lineWidth = 1.3;
+        for(var lick = 0; lick < 7; lick++){
+          var lx0 = -34 + Math.random() * 68, ly0 = 34;
+          ctx.beginPath();
+          ctx.moveTo(lx0, ly0);
+          ctx.quadraticCurveTo(lx0 + (Math.random() * 14 - 7), 0, lx0 + (Math.random() * 10 - 5), -30 - Math.random() * 8);
+          ctx.stroke();
+        }
       } else if(style === 'water'){
         ctx.strokeStyle = 'rgba(215,240,255,' + (alpha * 0.55) + ')';
         ctx.lineWidth = 1.4;
@@ -866,6 +876,68 @@
           ctx.beginPath();
           ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, 1.2 + Math.random() * 1.8, 0, Math.PI * 2);
           ctx.fill();
+        }
+      } else if(style === 'metal'){
+        // brushed-aluminum grain: dozens of fine near-horizontal scratch lines
+        for(var mt = 0; mt < 34; mt++){
+          var my = -34 + Math.random() * 68;
+          ctx.strokeStyle = 'rgba(' + (Math.random() < 0.5 ? '255,255,255' : '60,62,64') + ',' + (alpha * 0.22) + ')';
+          ctx.lineWidth = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(-42 + Math.random() * 8, my);
+          ctx.lineTo(42 - Math.random() * 8, my + (Math.random() * 3 - 1.5));
+          ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.55) + ')';
+        ctx.beginPath(); ctx.arc(-18, -14, 1.6, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(14, 18, 1.4, 0, Math.PI * 2); ctx.fill();
+      } else if(style === 'graffiti'){
+        // spray mist speckle everywhere + a few paint drips running down
+        for(var sp = 0; sp < 60; sp++){
+          ctx.fillStyle = 'rgba(255,255,255,' + (alpha * (0.15 + Math.random() * 0.25)) + ')';
+          ctx.beginPath();
+          ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, Math.random() * 1.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.strokeStyle = 'rgba(180,20,90,' + (alpha * 0.75) + ')';
+        ctx.lineWidth = 2.4;
+        for(var dr = 0; dr < 3; dr++){
+          var dx0 = -24 + dr * 24 + (Math.random() * 10 - 5);
+          var dripLen = 10 + Math.random() * 18;
+          ctx.beginPath();
+          ctx.moveTo(dx0, 10);
+          ctx.lineTo(dx0 + (Math.random() * 4 - 2), 10 + dripLen);
+          ctx.stroke();
+        }
+      } else if(style === 'painted'){
+        // visible brush bristle strokes, diagonal, plus a glossy highlight
+        for(var bs = 0; bs < 9; bs++){
+          var by0 = -30 + bs * 7;
+          ctx.strokeStyle = 'rgba(' + (Math.random() < 0.5 ? '210,235,255' : '15,50,100') + ',' + (alpha * 0.32) + ')';
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.moveTo(-40, by0);
+          ctx.lineTo(40, by0 - 10 + Math.random() * 6);
+          ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.4) + ')';
+        ctx.beginPath(); ctx.ellipse(-10, -12, 10, 5, -0.4, 0, Math.PI * 2); ctx.fill();
+      } else if(style === 'statue'){
+        // weathered patina blotches + fine age cracks
+        for(var pt = 0; pt < 10; pt++){
+          ctx.fillStyle = 'rgba(90,120,100,' + (alpha * 0.3) + ')';
+          ctx.beginPath();
+          ctx.arc(-36 + Math.random() * 72, -32 + Math.random() * 64, 4 + Math.random() * 7, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.strokeStyle = 'rgba(40,32,20,' + (alpha * 0.45) + ')';
+        ctx.lineWidth = 1;
+        for(var cr2 = 0; cr2 < 4; cr2++){
+          var sx = -30 + Math.random() * 60, sy = -28 + Math.random() * 56;
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx + (Math.random() * 14 - 7), sy + (Math.random() * 14 - 7));
+          ctx.stroke();
         }
       } else if(style === 'chalk'){
         ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
@@ -897,11 +969,18 @@
           ctx.stroke();
         }
       } else if(style === 'gold'){
-        ctx.strokeStyle = 'rgba(255,255,235,' + (alpha * 0.7) + ')';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(-40, -34); ctx.lineTo(40, 34);
-        ctx.stroke();
+        // hammered/brushed gold: many fine diagonal strokes plus a couple bright sparkles
+        for(var hg = 0; hg < 16; hg++){
+          var hy = -34 + hg * 4.5;
+          ctx.strokeStyle = 'rgba(255,255,235,' + (alpha * 0.3) + ')';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(-40, hy); ctx.lineTo(40, hy + 12);
+          ctx.stroke();
+        }
+        ctx.fillStyle = 'rgba(255,255,245,' + (alpha * 0.8) + ')';
+        ctx.beginPath(); ctx.arc(-12, -18, 1.8, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(16, 10, 1.4, 0, Math.PI * 2); ctx.fill();
       } else if(style === 'glass'){
         ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
         ctx.lineWidth = 5;
@@ -977,9 +1056,10 @@
         }
         ctx.restore();
       } else if(style === 'crystal'){
+        // facet cuts crossing the whole surface, plus several bright facet highlights
         ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
         ctx.lineWidth = 1.2;
-        for(var fc = 0; fc < 5; fc++){
+        for(var fc = 0; fc < 9; fc++){
           ctx.beginPath();
           ctx.moveTo(-40 + Math.random() * 80, -36 + Math.random() * 72);
           ctx.lineTo(-40 + Math.random() * 80, -36 + Math.random() * 72);
@@ -987,6 +1067,8 @@
         }
         ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.5) + ')';
         ctx.beginPath(); ctx.moveTo(-8, -20); ctx.lineTo(6, -14); ctx.lineTo(-4, 0); ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,' + (alpha * 0.35) + ')';
+        ctx.beginPath(); ctx.moveTo(12, 4); ctx.lineTo(24, 8); ctx.lineTo(14, 18); ctx.fill();
       } else if(style === 'holo'){
         ctx.strokeStyle = 'rgba(255,255,255,' + (alpha * 0.4) + ')';
         ctx.lineWidth = 3;
@@ -994,6 +1076,12 @@
           ctx.beginPath();
           ctx.moveTo(-44, hl); ctx.lineTo(44, hl + 10);
           ctx.stroke();
+        }
+        for(var spk = 0; spk < 16; spk++){
+          ctx.fillStyle = 'rgba(255,255,255,' + (alpha * (0.3 + Math.random() * 0.5)) + ')';
+          ctx.beginPath();
+          ctx.arc(-40 + Math.random() * 80, -36 + Math.random() * 72, Math.random() * 1.2, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
       ctx.restore();
