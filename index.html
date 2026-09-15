@@ -592,6 +592,7 @@
     var ctx = canvas.getContext('2d');
     var DPR = Math.min(window.devicePixelRatio || 1, 2);
     var hero = canvas.closest('.hero');
+    var mPath = new Path2D("M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z");
     var COLORS = ['96,181,255', '61,214,140']; // tech blue, matrix green (rgb triples)
     var COLUMN_COUNT = 18, GLYPHS_PER_COLUMN = 4;
     var drops = [], w = 0, h = 0, markX = 0, markY = 0;
@@ -653,25 +654,98 @@
       });
     }
 
-    /* ---- intro: several DIFFERENT TYPES of "M" (different typefaces/weights/cases,
-       like a collage of found letters), all stacked in the SAME spot -- right where
+    /* ---- intro: the same M shape, but rendered in several different MATERIALS/CONTEXTS
+       (grass, fire, water, metal, stone...), all stacked in the SAME spot -- right where
        the real logo sits -- taking turns before the one real logo resolves there.
        The rain behind stays pure 1s and 0s, everywhere else on the hero. ---- */
     var burst = [
-      { ch: 'M', font: '900 74px Anton',                                    mode: 'fill',   color: '245,245,245', dx: -10, dy: -6,  rot: -9,  delay: 0    },
-      { ch: 'M', font: 'italic 300 64px "Bricolage Grotesque"',              mode: 'fill',   color: '96,181,255',  dx: 10,  dy: 4,   rot: 11,  delay: 170  },
-      { ch: 'm', font: '700 46px "IBM Plex Mono"',                          mode: 'fill',   color: '61,214,140',  dx: 0,   dy: 10,  rot: 0,   delay: 340  },
-      { ch: 'M', font: '400 68px Georgia, "Times New Roman", serif',        mode: 'fill',   color: '245,245,245', dx: -8,  dy: 8,   rot: 14,  delay: 510  },
-      { ch: 'M', font: '900 52px Impact, "Arial Narrow", sans-serif',       mode: 'outline', color: '96,181,255', dx: 12,  dy: -8,  rot: -12, delay: 680  },
-      { ch: 'm', font: '400 44px "Courier New", monospace',                 mode: 'fill',   color: '61,214,140',  dx: -4,  dy: -12, rot: 0,   delay: 850  },
-      { ch: 'M', font: '700 58px Anton',                                    mode: 'outline', color: '245,245,245', dx: 6,  dy: 12,  rot: 6,  delay: 1020 }
+      { style: 'grass',   scale: 0.25, dx: -10, dy: -6,  rot: -9,  delay: 0    },
+      { style: 'fire',    scale: 0.21, dx: 10,  dy: 4,   rot: 11,  delay: 170  },
+      { style: 'water',   scale: 0.18, dx: 0,   dy: 10,  rot: 0,   delay: 340  },
+      { style: 'metal',   scale: 0.23, dx: -8,  dy: 8,   rot: 14,  delay: 510  },
+      { style: 'stone',   scale: 0.19, dx: 12,  dy: -8,  rot: -12, delay: 680  },
+      { style: 'outline', scale: 0.22, dx: -4,  dy: -12, rot: 0,   delay: 850  },
+      { style: 'solid',   scale: 0.16, dx: 6,   dy: 12,  rot: 6,   delay: 1020 }
     ];
     var ITEM_LIFE = 900, INTRO_DURATION = ITEM_LIFE + 1020 + 50;
 
+    function paintM(style, alpha, t){
+      if(style === 'grass'){
+        var g = ctx.createLinearGradient(0, 20, 0, 160);
+        g.addColorStop(0, 'rgba(95,205,115,' + alpha + ')');
+        g.addColorStop(1, 'rgba(28,105,52,' + alpha + ')');
+        ctx.fillStyle = g; ctx.fill(mPath);
+        ctx.save(); ctx.clip(mPath);
+        ctx.strokeStyle = 'rgba(195,255,205,' + (alpha * 0.55) + ')';
+        ctx.lineWidth = 1.4;
+        for(var i = 0; i < 26; i++){
+          var bx = 10 + Math.random() * 290;
+          ctx.beginPath();
+          ctx.moveTo(bx, 172);
+          ctx.quadraticCurveTo(bx + (Math.random() * 8 - 4), 100, bx + (Math.random() * 12 - 6), 18);
+          ctx.stroke();
+        }
+        ctx.restore();
+      } else if(style === 'fire'){
+        var g = ctx.createLinearGradient(0, 172, 0, 8);
+        g.addColorStop(0, 'rgba(255,236,130,' + alpha + ')');
+        g.addColorStop(0.5, 'rgba(255,138,38,' + alpha + ')');
+        g.addColorStop(1, 'rgba(195,28,18,' + alpha + ')');
+        ctx.fillStyle = g; ctx.fill(mPath);
+        ctx.save(); ctx.clip(mPath);
+        ctx.fillStyle = 'rgba(255,250,205,' + (alpha * 0.45) + ')';
+        for(var j = 0; j < 5; j++){
+          var fx = 20 + Math.random() * 270, fy = 150 - Math.random() * 50;
+          ctx.beginPath(); ctx.ellipse(fx, fy, 5, 12, 0, 0, Math.PI * 2); ctx.fill();
+        }
+        ctx.restore();
+      } else if(style === 'water'){
+        var wg = ctx.createLinearGradient(0, 18, 0, 160);
+        wg.addColorStop(0, 'rgba(70,150,225,' + alpha + ')');
+        wg.addColorStop(1, 'rgba(18,55,115,' + alpha + ')');
+        ctx.fillStyle = wg; ctx.fill(mPath);
+        ctx.save(); ctx.clip(mPath);
+        ctx.strokeStyle = 'rgba(215,240,255,' + (alpha * 0.55) + ')';
+        ctx.lineWidth = 1.6;
+        for(var yy = 20; yy < 168; yy += 13){
+          ctx.beginPath();
+          for(var xx = 0; xx <= 307; xx += 10){
+            var yOff = Math.sin(xx * 0.09 + t * 0.005 + yy * 0.3) * 3;
+            if(xx === 0) ctx.moveTo(xx, yy + yOff); else ctx.lineTo(xx, yy + yOff);
+          }
+          ctx.stroke();
+        }
+        ctx.restore();
+      } else if(style === 'metal'){
+        var mg = ctx.createLinearGradient(0, 0, 307, 177);
+        mg.addColorStop(0, 'rgba(150,155,160,' + alpha + ')');
+        mg.addColorStop(0.42, 'rgba(235,237,240,' + alpha + ')');
+        mg.addColorStop(0.55, 'rgba(110,114,118,' + alpha + ')');
+        mg.addColorStop(1, 'rgba(185,190,195,' + alpha + ')');
+        ctx.fillStyle = mg; ctx.fill(mPath);
+      } else if(style === 'stone'){
+        ctx.fillStyle = 'rgba(150,150,148,' + alpha + ')';
+        ctx.fill(mPath);
+        ctx.save(); ctx.clip(mPath);
+        for(var k = 0; k < 55; k++){
+          ctx.fillStyle = 'rgba(' + (Math.random() < 0.5 ? '95,95,92' : '205,205,200') + ',' + (alpha * 0.5) + ')';
+          ctx.beginPath();
+          ctx.arc(Math.random() * 307, Math.random() * 177, 1.3 + Math.random() * 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      } else if(style === 'outline'){
+        ctx.strokeStyle = 'rgba(245,245,245,' + (0.9 * alpha) + ')';
+        ctx.lineWidth = 5;
+        ctx.stroke(mPath);
+      } else {
+        ctx.fillStyle = 'rgba(245,245,245,' + alpha + ')';
+        ctx.fill(mPath);
+      }
+    }
+
     function drawBurst(elapsed){
       var responsive = Math.min(1, w / 680); // shrink the collage proportionally on narrow viewports
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
       burst.forEach(function(item){
         var local = elapsed - item.delay;
         if(local < 0 || local > ITEM_LIFE) return;
@@ -682,16 +756,9 @@
         ctx.save();
         ctx.translate(markX + item.dx * responsive, markY + item.dy * responsive);
         ctx.rotate(item.rot * Math.PI / 180);
-        ctx.scale(responsive, responsive);
-        ctx.font = item.font;
-        if(item.mode === 'outline'){
-          ctx.lineWidth = 2;
-          ctx.strokeStyle = 'rgba(' + item.color + ',' + (0.9 * alpha) + ')';
-          ctx.strokeText(item.ch, 0, 0);
-        } else {
-          ctx.fillStyle = 'rgba(' + item.color + ',' + (0.85 * alpha) + ')';
-          ctx.fillText(item.ch, 0, 0);
-        }
+        ctx.scale(item.scale * responsive, item.scale * responsive);
+        ctx.translate(-153.6, -88.4);
+        paintM(item.style, alpha, elapsed);
         ctx.restore();
       });
     }
