@@ -672,8 +672,9 @@
       { ch: 'M', font: '700 60px "Bricolage Grotesque"',              style: 'painted', dx: 10,  dy: 6,   rot: 9,   delay: 2640 },
       { ch: 'M', font: '400 62px Georgia, serif',                     style: 'statue',  dx: 0,   dy: -8,  rot: 0,   delay: 2860 }
     ];
-    var SLOT = 220; // spacing between each M's entrance -- they coexist, but each new one covers the last
-    var INTRO_DURATION = burst.length * SLOT + 300;
+    var SLOT = 220; // spacing between each M's entrance
+    var FADE_IN = 200, HOLD = 150, FADE_OUT = 300, ITEM_LIFE = FADE_IN + HOLD + FADE_OUT;
+    var INTRO_DURATION = (burst.length - 1) * SLOT + ITEM_LIFE + 50;
 
     // paints one letterform (varies by font/ch) in one material (varies by style),
     // masked to that letterform's own silhouette via 'source-atop' compositing
@@ -869,10 +870,11 @@
       ctx.clip();
       burst.forEach(function(item){
         var local = elapsed - item.delay;
-        if(local < 0) return; // hasn't appeared yet
-        // quick fade-in, then holds at full opacity -- no fade-out: each new M simply
-        // paints over whichever one came before it (drawn later in the array = on top)
-        var alpha = Math.min(1, local / 90);
+        if(local < 0 || local > ITEM_LIFE) return; // not on screen yet, or already gone
+        var alpha; // fades in, holds, then fades back out
+        if(local < FADE_IN) alpha = local / FADE_IN;
+        else if(local < FADE_IN + HOLD) alpha = 1;
+        else alpha = Math.max(0, 1 - (local - FADE_IN - HOLD) / FADE_OUT);
         ctx.save();
         ctx.translate(markX + item.dx * responsive, markY + item.dy * responsive);
         ctx.rotate(item.rot * Math.PI / 180);
@@ -893,7 +895,7 @@
       drawRain(16);
       revealHeroMark();
     } else {
-      setTimeout(revealHeroMark, burst.length * 220); // the real logo pops in right after the last M and covers it, same rule as the rest
+      setTimeout(revealHeroMark, (burst.length - 1) * SLOT + FADE_IN + HOLD); // real logo crossfades in as the last M starts fading out
       var last = null, startTs = null;
       function frame(ts){
         if(startTs === null) startTs = ts;
