@@ -672,8 +672,8 @@
       { ch: 'M', font: '700 60px "Bricolage Grotesque"',              style: 'painted', dx: 10,  dy: 6,   rot: 9,   delay: 2640 },
       { ch: 'M', font: '400 62px Georgia, serif',                     style: 'statue',  dx: 0,   dy: -8,  rot: 0,   delay: 2860 }
     ];
-    var SLOT = 220; // each M gets its own slot; slots never overlap, so only one M is ever visible
-    var ITEM_LIFE = SLOT, INTRO_DURATION = burst.length * SLOT + 50;
+    var SLOT = 220; // spacing between each M's entrance -- they coexist, but each new one covers the last
+    var INTRO_DURATION = burst.length * SLOT + 300;
 
     // paints one letterform (varies by font/ch) in one material (varies by style),
     // masked to that letterform's own silhouette via 'source-atop' compositing
@@ -860,13 +860,19 @@
 
     function drawBurst(elapsed){
       var responsive = Math.min(1, w / 680); // shrink the collage proportionally on narrow viewports
+      // hard-clip everything to the logo's own footprint -- no M (or its paper card,
+      // whatever its font/rotation) can ever bleed out past this box
+      ctx.save();
+      var boxW = 176 * responsive, boxH = 116 * responsive;
+      ctx.beginPath();
+      ctx.rect(markX - boxW / 2, markY - boxH / 2, boxW, boxH);
+      ctx.clip();
       burst.forEach(function(item){
         var local = elapsed - item.delay;
-        if(local < 0 || local > ITEM_LIFE) return;
-        var alpha; // fade in / hold / fade out, entirely inside this item's own slot -- never touches the next one
-        if(local < 60) alpha = local / 60;
-        else if(local < 160) alpha = 1;
-        else alpha = Math.max(0, 1 - (local - 160) / 60);
+        if(local < 0) return; // hasn't appeared yet
+        // quick fade-in, then holds at full opacity -- no fade-out: each new M simply
+        // paints over whichever one came before it (drawn later in the array = on top)
+        var alpha = Math.min(1, local / 90);
         ctx.save();
         ctx.translate(markX + item.dx * responsive, markY + item.dy * responsive);
         ctx.rotate(item.rot * Math.PI / 180);
@@ -875,6 +881,7 @@
         paintGlyphTexture(item.ch, item.font, item.style, alpha, elapsed);
         ctx.restore();
       });
+      ctx.restore();
     }
 
     function revealHeroMark(){
@@ -886,7 +893,7 @@
       drawRain(16);
       revealHeroMark();
     } else {
-      setTimeout(revealHeroMark, 14 * 220); // fires right as the last M's slot ends -- clean handoff, no overlap
+      setTimeout(revealHeroMark, burst.length * 220); // the real logo pops in right after the last M and covers it, same rule as the rest
       var last = null, startTs = null;
       function frame(ts){
         if(startTs === null) startTs = ts;
