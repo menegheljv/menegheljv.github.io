@@ -69,17 +69,6 @@
     position:absolute; inset:0; width:100%; height:100%;
     display:block; pointer-events:none; z-index:0;
   }
-  /* a monogram-style frame of small M's running along the top and bottom edges */
-  .hero-frame{
-    position:absolute; left:0; right:0; height:34px;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 307.244 176.752'%3E%3Cpath d='M 285.151,101.218 C 283.006,100.568 280.213,106.490 278.838,108.362 C 268.731,124.934 252.875,124.013 243.351,107.700 C 234.441,93.258 236.131,75.298 232.630,59.175 C 229.488,43.060 215.495,20.000 196.827,32.340 C 187.099,39.011 181.773,55.039 180.329,66.541 C 178.585,80.790 178.465,96.011 170.706,108.501 C 158.554,128.061 140.637,121.612 132.847,102.500 C 123.526,80.376 131.298,50.126 110.616,33.170 C 98.511,23.232 85.104,32.522 79.171,44.383 C 70.470,59.945 73.099,78.814 68.397,95.441 C 65.192,109.233 51.323,128.012 35.911,117.281 C 32.335,114.928 29.432,111.070 26.952,107.379 C 21.398,98.600 20.000,103.958 20.380,110.736 C 23.235,140.619 51.746,156.752 67.079,124.077 C 75.197,107.309 71.195,87.113 79.009,70.005 C 89.002,47.248 110.523,46.601 120.045,70.443 C 128.022,89.433 123.196,114.552 136.075,131.683 C 151.215,152.464 170.430,139.498 176.726,119.423 C 182.374,103.820 179.729,86.197 186.257,70.984 C 190.717,59.512 203.062,47.523 215.411,55.145 C 235.324,68.081 230.967,95.133 236.355,115.193 C 239.724,128.157 250.241,145.929 265.934,141.576 C 277.194,137.859 284.000,125.095 286.094,113.873 C 286.901,108.465 287.244,103.045 285.227,101.256 Z' fill='%23f5f5f5' fill-opacity='0.32'/%3E%3C/svg%3E");
-    background-repeat:repeat-x;
-    background-size:54px 34px;
-    background-position:0 center;
-    pointer-events:none; z-index:0;
-  }
-  .hero-frame.top{ top:0; border-bottom:1px solid var(--on-black-line); }
-  .hero-frame.bottom{ bottom:0; border-top:1px solid var(--on-black-line); background-position:27px center; }
   .hero-mark{
     width:min(110px,24vw); margin:0 auto 30px; color:var(--on-black); position:relative; z-index:1;
     filter:drop-shadow(0 0 26px rgba(245,245,245,0.35));
@@ -272,8 +261,6 @@
 
   <section class="hero">
     <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
-    <div class="hero-frame top" aria-hidden="true"></div>
-    <div class="hero-frame bottom" aria-hidden="true"></div>
     <div class="wrap">
       <div class="hero-mark" aria-hidden="true">
         <div class="hero-mark-reveal" id="heroMarkReveal">
@@ -607,7 +594,7 @@
     var hero = canvas.closest('.hero');
     var COLORS = ['96,181,255', '61,214,140']; // tech blue, matrix green (rgb triples)
     var COLUMN_COUNT = 18, GLYPHS_PER_COLUMN = 4;
-    var drops = [], w = 0, h = 0;
+    var drops = [], w = 0, h = 0, markX = 0, markY = 0;
 
     function pickChar(){ return Math.random() < 0.5 ? '0' : '1'; } // background stays pure 1s and 0s
 
@@ -636,6 +623,12 @@
       canvas.style.height = h + 'px';
       ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
       setupDrops();
+      var markEl = hero.querySelector('.hero-mark');
+      if(markEl){
+        var mr = markEl.getBoundingClientRect();
+        markX = mr.left - rect.left + mr.width / 2;
+        markY = mr.top - rect.top + mr.height / 2;
+      }
     }
     window.addEventListener('resize', resize);
     resize();
@@ -661,16 +654,17 @@
     }
 
     /* ---- intro: several DIFFERENT TYPES of "M" (different typefaces/weights/cases,
-       like a collage of found letters) scattered up front -- then they fade as the
-       one real logo resolves in place. The rain behind stays pure 1s and 0s. ---- */
+       like a collage of found letters), all stacked in the SAME spot -- right where
+       the real logo sits -- taking turns before the one real logo resolves there.
+       The rain behind stays pure 1s and 0s, everywhere else on the hero. ---- */
     var burst = [
-      { ch: 'M', font: '900 88px Anton',                                    mode: 'fill',   color: '245,245,245', xf: 0.20, yf: 0.38, rot: -9,  delay: 0    },
-      { ch: 'M', font: 'italic 300 76px "Bricolage Grotesque"',              mode: 'fill',   color: '96,181,255',  xf: 0.80, yf: 0.26, rot: 11,  delay: 170  },
-      { ch: 'm', font: '700 58px "IBM Plex Mono"',                          mode: 'fill',   color: '61,214,140',  xf: 0.50, yf: 0.60, rot: 0,   delay: 340  },
-      { ch: 'M', font: '400 82px Georgia, "Times New Roman", serif',        mode: 'fill',   color: '245,245,245', xf: 0.15, yf: 0.73, rot: 14,  delay: 510  },
-      { ch: 'M', font: '900 64px Impact, "Arial Narrow", sans-serif',       mode: 'outline', color: '96,181,255', xf: 0.85, yf: 0.68, rot: -12, delay: 680  },
-      { ch: 'm', font: '400 56px "Courier New", monospace',                 mode: 'fill',   color: '61,214,140',  xf: 0.50, yf: 0.15, rot: 0,   delay: 850  },
-      { ch: 'M', font: '700 70px Anton',                                    mode: 'outline', color: '245,245,245', xf: 0.30, yf: 0.86, rot: 6,  delay: 1020 }
+      { ch: 'M', font: '900 74px Anton',                                    mode: 'fill',   color: '245,245,245', dx: -10, dy: -6,  rot: -9,  delay: 0    },
+      { ch: 'M', font: 'italic 300 64px "Bricolage Grotesque"',              mode: 'fill',   color: '96,181,255',  dx: 10,  dy: 4,   rot: 11,  delay: 170  },
+      { ch: 'm', font: '700 46px "IBM Plex Mono"',                          mode: 'fill',   color: '61,214,140',  dx: 0,   dy: 10,  rot: 0,   delay: 340  },
+      { ch: 'M', font: '400 68px Georgia, "Times New Roman", serif',        mode: 'fill',   color: '245,245,245', dx: -8,  dy: 8,   rot: 14,  delay: 510  },
+      { ch: 'M', font: '900 52px Impact, "Arial Narrow", sans-serif',       mode: 'outline', color: '96,181,255', dx: 12,  dy: -8,  rot: -12, delay: 680  },
+      { ch: 'm', font: '400 44px "Courier New", monospace',                 mode: 'fill',   color: '61,214,140',  dx: -4,  dy: -12, rot: 0,   delay: 850  },
+      { ch: 'M', font: '700 58px Anton',                                    mode: 'outline', color: '245,245,245', dx: 6,  dy: 12,  rot: 6,  delay: 1020 }
     ];
     var ITEM_LIFE = 900, INTRO_DURATION = ITEM_LIFE + 1020 + 50;
 
@@ -686,7 +680,7 @@
         else if(local < 460) alpha = 1;
         else alpha = Math.max(0, 1 - (local - 460) / 440);
         ctx.save();
-        ctx.translate(item.xf * w, item.yf * h);
+        ctx.translate(markX + item.dx * responsive, markY + item.dy * responsive);
         ctx.rotate(item.rot * Math.PI / 180);
         ctx.scale(responsive, responsive);
         ctx.font = item.font;
